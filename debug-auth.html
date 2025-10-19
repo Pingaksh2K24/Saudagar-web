@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Auth</title>
+</head>
+<body>
+    <h1>Debug Auth State</h1>
+    <button onclick="clearStorage()">Clear All Storage</button>
+    <button onclick="checkCookies()">Check Cookies</button>
+    <div id="output"></div>
+    
+    <script>
+        function clearStorage() {
+            localStorage.clear()
+            sessionStorage.clear()
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            document.getElementById('output').innerHTML = 'Storage cleared!'
+        }
+        
+        function checkCookies() {
+            document.getElementById('output').innerHTML = 'Cookies: ' + document.cookie
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ensure proper layout for fixed sidebar and header */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Dashboard layout fixes */
+.dashboard-layout {
+  padding-left: 256px; /* 64 * 4 = 256px for w-64 sidebar */
+  padding-top: 80px;   /* Space for fixed header */
+  min-height: 100vh;
+}
+
+.sidebar-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 256px;
+  height: 100vh;
+  z-index: 50;
+}
+
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 256px;
+  right: 0;
+  height: 80px;
+  z-index: 40;
+}
+
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
