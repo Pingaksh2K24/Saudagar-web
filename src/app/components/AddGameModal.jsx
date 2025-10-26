@@ -15,7 +15,7 @@ let statusList = [
   { value: 'inactive', label: 'Inactive' },
 ];
 
-export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }) {
+export default function AddGameModal({ isOpen, onClose, onProjectCreated }) {
   const [gameName, setGameName] = useState('')
   const [description, setDescription] = useState('')
   const [openTime, setOpenTime] = useState('')

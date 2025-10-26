@@ -8,9 +8,9 @@ import TimeInput from './time-input/TimeInput'
 import Input from './input/page'
 import Dropdown from './dropdown/page'
 import { showSuccess, showError } from '../../../utils/notification'
-import { apiClient } from '../../../utils/api'
+import { getUserSession } from '@/utils/cookies'
 
-export default function EditGameModal({ isOpen, onClose, gameId, onGameUpdated }) {
+export default function EditGameModal({ isOpen, onClose, gameId, gameData, onGameUpdated }) {
   const [gameName, setGameName] = useState('')
   const [description, setDescription] = useState('')
   const [openTime, setOpenTime] = useState('')
@@ -18,33 +18,28 @@ export default function EditGameModal({ isOpen, onClose, gameId, onGameUpdated }
   const [status, setStatus] = useState('open')
   const [minBetAmount, setMinBetAmount] = useState('')
   const [maxBetAmount, setMaxBetAmount] = useState('')
+  const [village, setVillage] = useState('')
+  const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(false)
 
-  useEffect(() => {
-    if (isOpen && gameId) {
-      fetchGameDetails()
-    }
-  }, [isOpen, gameId])
-
-  const fetchGameDetails = async () => {
-    try {
-      setFetchLoading(true)
-      const response = await fetch(`http://localhost:3000/api/games/${gameId}`)
-      const game = await response.json()
-      setGameName(game.name || '')
-      setDescription(game.description || '')
-      setOpenTime(game.open_time || '')
-      setCloseTime(game.close_time || '')
-      setStatus(game.status || 'open')
-      setMinBetAmount(game.min_bet?.toString() || '')
-      setMaxBetAmount(game.max_bet?.toString() || '')
-    } catch (error) {
-      console.error('Error fetching game details:', error)
-    } finally {
-      setFetchLoading(false)
-    }
+  const formatTime = (isoString) => {
+    return isoString ? new Date(isoString).toTimeString().slice(0, 5) : ''
   }
+
+  useEffect(() => {
+    if (isOpen && gameData) {
+      setGameName(gameData.game_name || '')
+      setDescription(gameData.description || '')
+      setOpenTime(formatTime(gameData.open_time))
+      setCloseTime(formatTime(gameData.close_time))
+      setStatus(gameData.status || 'open')
+      setMinBetAmount(gameData.min_bet_amount?.toString() || '')
+      setMaxBetAmount(gameData.max_bet_amount?.toString() || '')
+      setVillage(gameData.village || '')
+      setAddress(gameData.address || '')
+    }
+  }, [isOpen, gameData])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -52,19 +47,32 @@ export default function EditGameModal({ isOpen, onClose, gameId, onGameUpdated }
 
     setLoading(true)
     try {
-      const response = await apiClient.games.update(gameId, {
-        game_name: gameName.trim(),
-        description: description.trim(),
-        open_time: openTime,
-        close_time: closeTime,
-        status,
-        min_bet_amount: minBetAmount ? parseInt(minBetAmount) : 10,
-        max_bet_amount: maxBetAmount ? parseInt(maxBetAmount) : 5000
+      const session = getUserSession()
+      const response = await fetch(`http://localhost:3000/api/games/update/${gameId}`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${session?.token}`,
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          game_name: gameName.trim(),
+          description: description.trim(),
+          open_time: openTime,
+          close_time: closeTime,
+          status,
+          min_bet_amount: minBetAmount ? parseInt(minBetAmount) : 10,
+          max_bet_amount: maxBetAmount ? parseInt(maxBetAmount) : 5000
+        })
       })
 
-      showSuccess('Game updated successfully!')
-      onGameUpdated(response.data)
-      onClose()
+      if (response.ok) {
+        const data = await response.json()
+        showSuccess('Game updated successfully!')
+        onGameUpdated(data)
+        onClose()
+      } else {
+        throw new Error('Failed to update game')
+      }
     } catch (error) {
       console.error('Error updating game:', error)
       showError('Failed to update game')
@@ -158,6 +166,22 @@ export default function EditGameModal({ isOpen, onClose, gameId, onGameUpdated }
                     { value: 'closed', label: 'Inactive' }
                   ]}
                   placeholder="Select Status"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Input
+                  type="text"
+                  value={village}
+                  onChange={setVillage}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                  placeholder="Village"
+                />
+                <Input
+                  type="text"
+                  value={address}
+                  onChange={setAddress}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                  placeholder="Address"
                 />
               </div>
             </div>

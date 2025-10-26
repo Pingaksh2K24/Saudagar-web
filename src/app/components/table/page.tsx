@@ -14,7 +14,15 @@ interface DataTableProps<T> {
   columns: Column<T>[]
   searchPlaceholder?: string
   emptyMessage?: string
-  pagination?: boolean
+  pagination?: boolean | {
+    current_page: number
+    has_next: boolean
+    has_prev: boolean
+    per_page: number
+    total: number
+    total_pages: number
+  }
+  onPageChange?: (page: number) => void
   actions?: (row: T) => React.ReactNode
   loading?: boolean
 }
@@ -25,6 +33,7 @@ export default function DataTable<T extends Record<string, any>>({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No data found',
   pagination = false,
+  onPageChange,
   actions,
   loading = false
 }: DataTableProps<T>) {
@@ -54,22 +63,39 @@ export default function DataTable<T extends Record<string, any>>({
   })
 
   // Pagination logic
-  const shouldShowPagination = data.length > recordsPerPage
-  const totalPages = Math.ceil(data.length / recordsPerPage)
-  const startIndex = (currentPage - 1) * recordsPerPage
-  const endIndex = startIndex + recordsPerPage
-  const paginatedData = shouldShowPagination ? sortedData.slice(startIndex, endIndex) : sortedData
+  const isPaginationObject = typeof pagination === 'object' && pagination !== null
+  const paginationData = isPaginationObject ? pagination : null
+  const shouldShowPagination = !!pagination
+  const totalPages = isPaginationObject ? paginationData.total_pages : Math.ceil(data.length / recordsPerPage)
+  const currentPageNum = isPaginationObject ? paginationData.current_page : currentPage
+  const totalRecords = isPaginationObject ? paginationData.total : data.length
+  const perPage = isPaginationObject ? paginationData.per_page : recordsPerPage
+  const startIndex = (currentPageNum - 1) * perPage
+  const endIndex = Math.min(startIndex + perPage, totalRecords)
+  const paginatedData = isPaginationObject ? sortedData : (pagination ? sortedData.slice(startIndex, endIndex) : sortedData)
 
   const goToPage = (page: number) => {
-    setCurrentPage(page)
+    if (onPageChange) {
+      onPageChange(page)
+    } else {
+      setCurrentPage(page)
+    }
   }
 
   const goToPrevious = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1))
+    if (isPaginationObject && paginationData.has_prev) {
+      goToPage(currentPageNum - 1)
+    } else {
+      setCurrentPage(prev => Math.max(prev - 1, 1))
+    }
   }
 
   const goToNext = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages))
+    if (isPaginationObject && paginationData.has_next) {
+      goToPage(currentPageNum + 1)
+    } else {
+      setCurrentPage(prev => Math.min(prev + 1, totalPages))
+    }
   }
 
   if (loading) {
@@ -135,19 +161,19 @@ export default function DataTable<T extends Record<string, any>>({
       </div>
       
       {/* Pagination */}
-      {shouldShowPagination && (
+      {pagination && (
         <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={goToPrevious}
-              disabled={currentPage === 1}
+              disabled={isPaginationObject ? !paginationData.has_prev : currentPageNum === 1}
               className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               onClick={goToNext}
-              disabled={currentPage === totalPages}
+              disabled={isPaginationObject ? !paginationData.has_next : currentPageNum === totalPages}
               className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
@@ -156,16 +182,16 @@ export default function DataTable<T extends Record<string, any>>({
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                <span className="font-medium">{Math.min(endIndex, data.length)}</span> of{' '}
-                <span className="font-medium">{data.length}</span> results
+                Showing <span className="font-medium">{totalRecords > 0 ? startIndex + 1 : 0}</span> to{' '}
+                <span className="font-medium">{endIndex}</span> of{' '}
+                <span className="font-medium">{totalRecords}</span> results
               </p>
             </div>
             <div>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
                 <button
                   onClick={goToPrevious}
-                  disabled={currentPage === 1}
+                  disabled={isPaginationObject ? !paginationData.has_prev : currentPageNum === 1}
                   className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   ←
@@ -175,7 +201,7 @@ export default function DataTable<T extends Record<string, any>>({
                     key={page}
                     onClick={() => goToPage(page)}
                     className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                      page === currentPage
+                      page === currentPageNum
                         ? 'z-10 bg-red-50 border-red-500 text-red-600'
                         : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                     }`}
@@ -185,7 +211,7 @@ export default function DataTable<T extends Record<string, any>>({
                 ))}
                 <button
                   onClick={goToNext}
-                  disabled={currentPage === totalPages}
+                  disabled={isPaginationObject ? !paginationData.has_next : currentPageNum === totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   →

@@ -24,7 +24,7 @@ interface User {
 const roleOptions = [
   { value: 'admin', label: 'Admin' },
   { value: 'moderator', label: 'Moderator' },
-  { value: 'user', label: 'User' }
+  { value: 'agent', label: 'Agent' }
 ]
 
 const statusOptions = [

@@ -1,24 +1,107 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DateRange, Save, SportsEsports } from '@mui/icons-material'
 import Button from '../../../components/button/page'
 import Dropdown from '../../../components/dropdown/page'
+import DateInput from '../../../components/date-input/page'
+import { getUserSession } from '@/utils/cookies'
+import { formatDateForInput } from '../../../../../utils/helper'
 
-const gameOptions = [
-  { value: 'mumbai-day', label: 'Mumbai Day' },
-  { value: 'delhi-night', label: 'Delhi Night' },
-  { value: 'gali-game', label: 'Gali Game' }
-]
 
 export default function DeclareResultPage() {
   const [selectedGame, setSelectedGame] = useState('')
+  
+  const handleGameSelect = (gameId) => {
+    setSelectedGame(gameId)
+    const selectedGameData = games.find(game => game?.game_id == gameId)
+    console.log('Selected Game ID:', gameId)
+    console.log('Selected Game Data:', selectedGameData)
+    console.log('All Games:', games)
+    if (selectedGameData) {
+      setDate(formatDateForInput(selectedGameData?.result_date) || formatDateForInput(new Date()))
+      setOpenResult(selectedGameData?.open_result || '')
+      setCloseResult(selectedGameData?.close_result || '')
+      setWinningNumber(selectedGameData?.winning_number || '')
+    }
+  }
+  const [games, setGames] = useState([])
+  const [loading, setLoading] = useState(false)
   const [openResult, setOpenResult] = useState('')
   const [winningNumber, setWinningNumber] = useState('')
   const [closeResult, setCloseResult] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
+  const [date, setDate] = useState('')
 
-  const handleDeclareResult = () => {
-    console.log('Declaring result:', { selectedGame, openResult, winningNumber, closeResult, date })
+  const fetchGames = async () => {
+    setLoading(true)
+    try {
+      const session = getUserSession()
+      const response = await fetch('http://localhost:3000/api/results/today-results', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session?.token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log('Fetch Games Response Status:', response)
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Games API Response:', data)
+        setGames(data.results || [])
+      }
+    } catch (error) {
+      console.error('Error fetching games:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchGames()
+  }, [])
+
+  const handleDeclareResult = async () => {
+    if (!selectedGame) return
+
+    setLoading(true)
+    try {
+      const session = getUserSession()
+      console.log('Token:', session?.token)
+      
+      const headers = { 'Content-Type': 'application/json' }
+      if (session?.token) {
+        headers['Authorization'] = `Bearer ${session?.token}`
+      }
+      
+      const response = await fetch('http://localhost:3000/api/results/declare', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          game_id: parseInt(selectedGame),
+          result_date: date,
+          open_result: openResult,
+          close_result: closeResult,
+          winning_number: winningNumber
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Result declared successfully:', data)
+        alert('Result declared successfully!')
+        fetchGames();
+        setOpenResult('')
+        setCloseResult('')
+        setWinningNumber('')
+        setSelectedGame('')
+      } else {
+        throw new Error('Failed to declare result')
+      }
+    } catch (error) {
+      console.error('Error declaring result:', error)
+      alert('Failed to declare result')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -40,15 +123,19 @@ export default function DeclareResultPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="p-8 space-y-6">
           <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
             <label className="block text-sm font-semibold text-blue-800 mb-3">Select Game</label>
             <Dropdown
               value={selectedGame}
-              onChange={setSelectedGame}
-              options={gameOptions}
-              placeholder="Choose Game"
+              onChange={handleGameSelect}
+              options={games.map(game => ({
+                value: game.game_id,
+                label: game.game_name,
+                icon: <SportsEsports />
+              }))}
+              placeholder={loading ? "Loading games..." : "Choose Game"}
             />
           </div>
 
@@ -106,22 +193,21 @@ export default function DeclareResultPage() {
           </div>
 
           <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
-            <label className="block text-sm font-semibold text-purple-800 mb-3">Result Date</label>
-            <input
-              type="date"
+            <DateInput
+              label="Result Date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-purple-300 rounded-xl focus:ring-4 focus:ring-purple-200 focus:border-purple-500 bg-white"
-              suppressHydrationWarning
+              onChange={setDate}
+              disabled={true}
             />
           </div>
 
           <div className="pt-4">
             <Button
-              caption="Declare Result"
+              caption={loading ? "Declaring..." : "Declare Result"}
               variant="primary"
               icon={<Save />}
               onClick={handleDeclareResult}
+              disabled={loading || !selectedGame}
               className="w-full py-4 text-lg font-bold bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
             />
           </div>

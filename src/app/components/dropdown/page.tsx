@@ -3,6 +3,7 @@
 interface Option {
   value: string | number
   label: string
+  icon?: React.ReactNode
 }
 
 interface DropdownProps {
@@ -71,7 +72,7 @@ export default function Dropdown({
                 transition: 'all 0.2s ease'
               }}
             >
-              {option.label}
+              {option.icon ? ` ${option.label}` : option.label}
             </option>
           ))}
         </select>

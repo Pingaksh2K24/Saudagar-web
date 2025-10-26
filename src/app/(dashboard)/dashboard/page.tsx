@@ -1,97 +1,134 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
-import CreateProjectModal from '../../components/CreateProjectModal'
-import CreateTaskModal from '../../components/CreateTaskModal'
+import { useState, useEffect } from 'react'
 import DashboardHeader from '../../components/dashboard/DashboardHeader'
 import StatsCards from '../../components/dashboard/StatsCards'
-import ProjectsSection from '../../components/dashboard/ProjectsSection'
-import { useProjectStore } from '../../store/projectStore'
-import { showError } from '../../../../utils/notification'
-import { apiClient } from '../../../../utils/api'
-import { Project, Task } from '../../../types'
+import AgentOverview from '../../components/dashboard/AgentOverview'
+import LiveBetsTable from '../../components/dashboard/LiveBetsTable'
+import VillageWiseStats from '../../components/dashboard/VillageWiseStats'
+import QuickActions from '../../components/dashboard/QuickActions'
+import RecentActivity from '../../components/dashboard/RecentActivity'
+import TopNumbers from '../../components/dashboard/TopNumbers'
+import WeeklyChart from '../../components/dashboard/WeeklyChart'
+import GameWiseDetails from '../../components/dashboard/GameWiseDetails'
+import AddUserModal from '../users/AddUserModal'
+import Dropdown from '../../components/dropdown/page'
+import FilteredBidsTable from '../../components/dashboard/FilteredBidsTable'
 
 export default function DashboardPage() {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
-  const [selectedProjectId, setSelectedProjectId] = useState<string | number | null>(null)
-  const [selectedProjectName, setSelectedProjectName] = useState<string>('')
+  const [dashboardData, setDashboardData] = useState({
+    totalAgents: 52,
+    activeAgents: 48,
+    totalBets: 1247,
+    todayCollection: 45670,
+    pendingPayouts: 12450,
+    netProfit: 33220
+  })
 
-  const setAllProjects = useProjectStore(state => state.setAllProjects)
-  
-  const fetchProjects = useCallback(async () => {
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
+  const [selectedGame, setSelectedGame] = useState('')
+  const [selectedVillage, setSelectedVillage] = useState('')
+  const [todayResults, setTodayResults] = useState([])
+  const [villageList, setVillageList] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const fetchTodayResults = async () => {
+    console.log('Starting fetchTodayResults...')
     try {
-      setLoading(true)
-      const response = await apiClient.projects.getAll()
-      setProjects(response.data.projects)
-      setAllProjects(response.data.projects) // Store in global state
-      if (response.data.message) {
-        console.log('Log Message', response.data.message)
+      const response = await fetch('http://localhost:3000/api/results/today-game-results')
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Fetched Today Results:', data.results)
+        const formattedGames = data?.results.map(game => ({
+          value: game.id,
+          label: game.game_name
+        }))
+        setTodayResults(formattedGames);
+      } else {
+        console.log('Today results API failed with status:', response.status)
       }
     } catch (error) {
-      console.error('API Error:', error)
-      const axiosError = error as { response?: { data?: { error?: string; details?: string } } }
-      const standardError = error as Error
-      const errorMessage = axiosError?.response?.data?.error || standardError?.message || 'Unknown error'
-      const errorDetails = axiosError?.response?.data?.details
-      showError(`Failed to load projects: ${errorMessage}${errorDetails ? ` - ${errorDetails}` : ''}`)
-    } finally {
-      setLoading(false)
+      console.error('Error fetching today results:', error)
     }
-  }, [setAllProjects])
-
-  // useEffect(() => {
-  //   fetchProjects()
-  // }, [fetchProjects])
-
-  const handleProjectCreated = (newProject: Project) => {
-    setProjects(prev => [...prev, newProject])
   }
 
-  const handleAddTask = (projectId: string | number) => {
-    const project = projects.find(p => p.id === projectId)
-    setSelectedProjectId(projectId)
-    setSelectedProjectName(project?.name || '')
-    setIsTaskModalOpen(true)
+  const fetchVillageList = async () => {
+    console.log('Starting fetchVillageList...')
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/village-list')
+      if (response.ok) {
+        const data = await response.json()
+        const formattedVillages = data?.users.map(village => ({
+          value: village.id,
+          label: village.village
+        }))
+        setVillageList(formattedVillages)
+      } else {
+        console.log('Village list API failed with status:', response.status)
+      }
+    } catch (error) {
+      console.error('Error fetching village list:', error)
+    }
   }
 
-  const handleTaskCreated = (newTask: Task) => {
-    // Update project's tasks array
-    setProjects(prev => prev.map(project => 
-      project.id === selectedProjectId 
-        ? { ...project, tasks: [...project.tasks, newTask] }
-        : project
-    ))
+  useEffect(() => {
+    console.log('Dashboard useEffect running...')
+    setLoading(true)
+    fetchTodayResults()
+    fetchVillageList()
+    setLoading(false)
+  }, [])
+
+  const handleUserAdded = () => {
+    console.log('User added successfully')
   }
 
   return (
-    <div className="p-6">
-      <DashboardHeader onNewProject={() => setIsModalOpen(true)} />
+    <div className="p-6 space-y-6">
+      <DashboardHeader onAddAgent={() => setIsAddUserModalOpen(true)} />
       
-      <StatsCards games={projects} />
-      
-      <ProjectsSection 
-        projects={projects}
-        loading={loading}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onAddTask={handleAddTask}
-      />
-      
-      <CreateProjectModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onProjectCreated={handleProjectCreated}
-      />
-      
-      <CreateTaskModal 
-        isOpen={isTaskModalOpen}
-        onClose={() => setIsTaskModalOpen(false)}
-        onTaskCreated={handleTaskCreated}
-        projectId={selectedProjectId?.toString() || ''}
-        projectName={selectedProjectName}
+      <div className="grid grid-cols-2 gap-4">
+        <Dropdown
+          options={todayResults}
+          value={selectedGame}
+          onChange={setSelectedGame}
+          placeholder="Select Game"
+          className=""
+        />
+        <Dropdown
+          options={villageList}
+          value={selectedVillage}
+          onChange={setSelectedVillage}
+          placeholder="Select Village"
+          className=""
+        />
+      </div>
+
+      <FilteredBidsTable selectedGame={selectedGame} selectedVillage={selectedVillage} />
+
+      {/* <StatsCards data={dashboardData} /> */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3 space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-1 gap-6">
+            {/* <WeeklyChart /> */}
+          </div>
+          {/* <GameWiseDetails /> */}
+          {/* <LiveBetsTable /> */}
+          {/* <VillageWiseStats /> */}
+        </div>
+
+        <div className="space-y-6">
+          {/* <QuickActions />
+          <AgentOverview />
+          <TopNumbers />
+          <RecentActivity /> */}
+        </div>
+      </div>
+
+      <AddUserModal
+        isOpen={isAddUserModalOpen}
+        onClose={() => setIsAddUserModalOpen(false)}
+        onUserAdded={handleUserAdded}
       />
     </div>
   )

@@ -71,7 +71,7 @@ export interface ProjectCardProps {
   onAddTask?: (projectId: string | number) => void
 }
 
-export interface CreateProjectModalProps {
+export interface AddGameModalProps {
   isOpen: boolean
   onClose: () => void
   onProjectCreated: (project: Project) => void

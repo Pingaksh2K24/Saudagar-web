@@ -44,6 +44,7 @@ export default function Input({
               ? 'border-red-300 focus:border-red-500' 
               : 'border-gray-200 focus:border-red-500'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+          suppressHydrationWarning
         />
         {icon && (
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center">

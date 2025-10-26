@@ -6,6 +6,8 @@ import { ViewButton } from '../../../components/action/page'
 import StatsCard from '../../users/StatsCard'
 import Dropdown from '../../../components/dropdown/page'
 import BetDetailsModal from '../BetDetailsModal'
+import React from 'react'
+import { getUserSession } from '@/utils/cookies'
 
 interface Bet {
   id: number
@@ -37,16 +39,92 @@ export default function AllBetsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedBet, setSelectedBet] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedGame, setSelectedGame] = useState('')
+  const [paginationInfo, setPaginationInfo] = useState({
+    current_page: 1,
+    has_next: false,
+    has_prev: false,
+    per_page: 10,
+    total: 0,
+    total_pages: 1
+  })
 
   useEffect(() => {
-    // Mock data
-    setBets([
-      { id: 1, user_name: 'John Doe', game_name: 'Mumbai Day', bet_type: 'single', bet_number: '5', amount: 100, status: 'won', created_at: '2024-01-01' },
-      { id: 2, user_name: 'Jane Smith', game_name: 'Delhi Night', bet_type: 'jodi', bet_number: '56', amount: 500, status: 'lost', created_at: '2024-01-02' },
-      { id: 3, user_name: 'Mike Johnson', game_name: 'Gali Game', bet_type: 'panna', bet_number: '567', amount: 200, status: 'pending', created_at: '2024-01-03' }
-    ])
-    setLoading(false)
-  }, [])
+    fetchBets()
+  }, [currentPage, activeFilters, selectedDate, selectedGame])
+
+  const fetchBets = async () => {
+    try {
+      setLoading(true)
+      const session = getUserSession()
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:3000/api/bids/fetch', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          pagination: {
+            page: currentPage,
+            limit: 10
+          },
+          filters: {
+            date: null,
+            game_id: null,
+            session_type: null,
+            status: null,
+            bid_type: null,
+            user_id: undefined
+          }
+        })
+      })
+      const resp = await response.json()
+      console.log('Fetched bets data listttttt :', resp)
+      setBets(Array.isArray(resp.data.bids) ? resp.data.bids : [])
+      setPaginationInfo(resp.data.pagination || {
+        current_page: 1,
+        has_next: false,
+        has_prev: false,
+        per_page: 10,
+        total: 0,
+        total_pages: 1
+      })
+    } catch (error) {
+      console.error('Error fetching bets:', error)
+      setBets([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const nextPage = async () => {
+    const token = localStorage.getItem('token')
+    const response = await fetch('http://localhost:3000/api/bids/fetch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        pagination: {
+          page: currentPage + 1,
+          limit: 10
+        },
+        filters: {
+          date: selectedDate,
+          game_id: selectedGame ? parseInt(selectedGame) : undefined,
+          status: activeFilters.status
+        }
+      })
+    })
+    const data = await response.json()
+    if (data.bets && data.bets.length > 0) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
 
   return (
     <div className="p-6">
@@ -59,7 +137,7 @@ export default function AllBetsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           title="Total Bets"
-          value={bets.length}
+          value={paginationInfo.total}
           icon={<AttachMoney className="w-6 h-6" />}
           gradient="from-blue-500 to-blue-600"
         />
@@ -93,6 +171,7 @@ export default function AllBetsPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            suppressHydrationWarning
           />
         </div>
         <div className="flex items-center space-x-4">
@@ -115,7 +194,7 @@ export default function AllBetsPage() {
 
       <DataTable<Bet>
         data={bets.filter(bet => {
-          const matchesSearch = searchTerm === '' || 
+          const matchesSearch = searchTerm === '' ||
             bet.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             bet.game_name?.toLowerCase().includes(searchTerm.toLowerCase())
           const matchesType = !activeFilters.bet_type || bet.bet_type === activeFilters.bet_type
@@ -124,8 +203,8 @@ export default function AllBetsPage() {
         })}
         columns={[
           {
-            key: 'user_name',
-            label: 'User',
+            key: 'full_name',
+            label: 'Agent',
             sortable: true,
             render: (value, bet) => (
               <div>
@@ -140,20 +219,26 @@ export default function AllBetsPage() {
             render: (value) => <span className="text-sm font-medium">{String(value)}</span>
           },
           {
-            key: 'bet_type',
+            key: 'session_type',
+            label: 'Session',
+            render: (value) => (
+              <span className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{String(value)}</span>
+            )
+          },
+          {
+            key: 'bid_type',
             label: 'Type',
             render: (value) => (
-              <span className={`px-2 py-1 text-xs font-semibold rounded-full capitalize ${
-                value === 'single' ? 'bg-blue-100 text-blue-800' :
+              <span className={`px-2 py-1 text-xs font-semibold rounded-full capitalize ${value === 'single' ? 'bg-blue-100 text-blue-800' :
                 value === 'jodi' ? 'bg-purple-100 text-purple-800' :
-                'bg-green-100 text-green-800'
-              }`}>
+                  'bg-green-100 text-green-800'
+                }`}>
                 {String(value)}
               </span>
             )
           },
           {
-            key: 'bet_number',
+            key: 'bid_number',
             label: 'Number',
             render: (value) => (
               <span className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">{String(value)}</span>
@@ -168,17 +253,16 @@ export default function AllBetsPage() {
             key: 'status',
             label: 'Status',
             render: (value) => (
-              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                value === 'won' ? 'bg-green-100 text-green-800' :
+              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${value === 'won' ? 'bg-green-100 text-green-800' :
                 value === 'lost' ? 'bg-red-100 text-red-800' :
-                'bg-yellow-100 text-yellow-800'
-              }`}>
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
                 {String(value)}
               </span>
             )
           },
           {
-            key: 'created_at',
+            key: 'bid_date',
             label: 'Date',
             render: (value) => (
               <span className="text-sm text-gray-500">
@@ -189,6 +273,8 @@ export default function AllBetsPage() {
         ]}
         emptyMessage="No bets found"
         loading={loading}
+        pagination={paginationInfo}
+        onPageChange={(page) => setCurrentPage(page)}
         actions={(bet) => (
           <div className="flex items-center justify-end">
             <ViewButton size="small" onClick={() => {
@@ -198,7 +284,7 @@ export default function AllBetsPage() {
           </div>
         )}
       />
-      
+
       <BetDetailsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
