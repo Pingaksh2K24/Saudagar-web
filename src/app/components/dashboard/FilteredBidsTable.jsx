@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import BidDetailsModal from './BidDetailsModal'
 
-export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
+export default function FilteredBidsTable({ selectedGame, selectedVillage, adminBids, pagination = {}, onPageChange }) {
   const [selectedBid, setSelectedBid] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -17,58 +17,47 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
     setIsModalOpen(false)
     setSelectedBid(null)
   }
-  const allBids = [
-    { id: 1, agent: 'Rajesh Kumar', village: 'rampur', game: 'milan-day', session: 'Open', bidType: 'Single Digit', number: '234', amount: 500, date: '15/01/2024', status: 'active' },
-    { id: 2, agent: 'Suresh Patel', village: 'shivpur', game: 'kalyan', session: 'Close', bidType: 'Jodi Digit', number: '567', amount: 1000, date: '15/01/2024', status: 'active' },
-    { id: 3, agent: 'Dinesh Yadav', village: 'krishnapur', game: 'main-bazar', session: 'Open', bidType: 'Single Panna', number: '890', amount: 750, date: '15/01/2024', status: 'active' },
-    { id: 4, agent: 'Mahesh Singh', village: 'ganeshpur', game: 'milan-night', session: 'Close', bidType: 'Double Panna', number: '123', amount: 300, date: '14/01/2024', status: 'won' },
-    { id: 5, agent: 'Rakesh Sharma', village: 'hanumanpur', game: 'rajdhani-day', session: 'Open', bidType: 'Triple Panna', number: '456', amount: 1200, date: '14/01/2024', status: 'lost' },
-    { id: 6, agent: 'Amit Kumar', village: 'rampur', game: 'milan-day', session: 'Close', bidType: 'Half Sangam', number: '789', amount: 800, date: '15/01/2024', status: 'active' },
-    { id: 7, agent: 'Vijay Singh', village: 'shivpur', game: 'kalyan', session: 'Open', bidType: 'Full Sangam', number: '345', amount: 600, date: '15/01/2024', status: 'active' },
-    { id: 8, agent: 'Ravi Patel', village: 'laxmipur', game: 'main-bazar', session: 'Close', bidType: 'Jodi Digit', number: '678', amount: 900, date: '14/01/2024', status: 'won' },
-    { id: 9, agent: 'Mohan Gupta', village: 'rampur', game: 'kalyan', session: 'Open', bidType: 'Single Digit', number: '123', amount: 400, date: '15/01/2024', status: 'active' },
-    { id: 10, agent: 'Kiran Sharma', village: 'shivpur', game: 'milan-day', session: 'Close', bidType: 'Double Panna', number: '456', amount: 650, date: '15/01/2024', status: 'lost' },
-    { id: 11, agent: 'Anil Verma', village: 'ganeshpur', game: 'main-bazar', session: 'Open', bidType: 'Triple Panna', number: '789', amount: 1100, date: '14/01/2024', status: 'won' },
-    { id: 12, agent: 'Deepak Singh', village: 'krishnapur', game: 'milan-night', session: 'Close', bidType: 'Half Sangam', number: '234', amount: 850, date: '14/01/2024', status: 'active' },
-    { id: 13, agent: 'Sanjay Kumar', village: 'hanumanpur', game: 'rajdhani-day', session: 'Open', bidType: 'Full Sangam', number: '567', amount: 950, date: '15/01/2024', status: 'active' },
-    { id: 14, agent: 'Ramesh Patel', village: 'laxmipur', game: 'kalyan', session: 'Close', bidType: 'Single Panna', number: '890', amount: 700, date: '15/01/2024', status: 'lost' },
-    { id: 15, agent: 'Vinod Yadav', village: 'rampur', game: 'milan-day', session: 'Open', bidType: 'Jodi Digit', number: '345', amount: 550, date: '14/01/2024', status: 'won' },
-    { id: 16, agent: 'Ashok Gupta', village: 'shivpur', game: 'main-bazar', session: 'Close', bidType: 'Single Digit', number: '678', amount: 450, date: '14/01/2024', status: 'active' },
-    { id: 17, agent: 'Prakash Singh', village: 'ganeshpur', game: 'milan-night', session: 'Open', bidType: 'Double Panna', number: '901', amount: 800, date: '15/01/2024', status: 'active' },
-    { id: 18, agent: 'Manoj Kumar', village: 'krishnapur', game: 'rajdhani-day', session: 'Close', bidType: 'Triple Panna', number: '234', amount: 1300, date: '15/01/2024', status: 'lost' },
-    { id: 19, agent: 'Santosh Patel', village: 'hanumanpur', game: 'kalyan', session: 'Open', bidType: 'Half Sangam', number: '567', amount: 750, date: '14/01/2024', status: 'won' },
-    { id: 20, agent: 'Gopal Sharma', village: 'laxmipur', game: 'milan-day', session: 'Close', bidType: 'Full Sangam', number: '890', amount: 1000, date: '14/01/2024', status: 'active' },
-    { id: 21, agent: 'Raman Singh', village: 'rampur', game: 'main-bazar', session: 'Open', bidType: 'Single Panna', number: '123', amount: 600, date: '15/01/2024', status: 'active' },
-    { id: 22, agent: 'Sunil Gupta', village: 'shivpur', game: 'milan-night', session: 'Close', bidType: 'Jodi Digit', number: '456', amount: 900, date: '15/01/2024', status: 'lost' },
-    { id: 23, agent: 'Ajay Kumar', village: 'ganeshpur', game: 'rajdhani-day', session: 'Open', bidType: 'Double Panna', number: '789', amount: 1150, date: '14/01/2024', status: 'won' },
-    { id: 24, agent: 'Rohit Patel', village: 'krishnapur', game: 'kalyan', session: 'Close', bidType: 'Triple Panna', number: '234', amount: 850, date: '14/01/2024', status: 'active' },
-    { id: 25, agent: 'Naveen Sharma', village: 'hanumanpur', game: 'milan-day', session: 'Open', bidType: 'Half Sangam', number: '567', amount: 700, date: '15/01/2024', status: 'active' },
-    { id: 26, agent: 'Pankaj Singh', village: 'laxmipur', game: 'main-bazar', session: 'Close', bidType: 'Full Sangam', number: '890', amount: 1250, date: '15/01/2024', status: 'lost' },
-    { id: 27, agent: 'Mukesh Kumar', village: 'rampur', game: 'milan-night', session: 'Open', bidType: 'Single Digit', number: '345', amount: 500, date: '14/01/2024', status: 'won' },
-    { id: 28, agent: 'Jitendra Patel', village: 'shivpur', game: 'rajdhani-day', session: 'Close', bidType: 'Single Panna', number: '678', amount: 950, date: '14/01/2024', status: 'active' }
-  ]
 
-  const filteredBids = allBids.filter(bid => {
+
+  console.log('AdminBids received:', adminBids)
+  const allBidsData = Array.isArray(adminBids) ? adminBids : []
+  console.log('Using data:', allBidsData)
+  
+  const filteredBids = allBidsData.filter(bid => {
     const gameMatch = !selectedGame || selectedGame === 'all' || bid.game === selectedGame
     const villageMatch = !selectedVillage || selectedVillage === 'all' || bid.village === selectedVillage
     return gameMatch && villageMatch
   })
 
-  const totalPages = Math.ceil(filteredBids.length / recordsPerPage)
-  const startIndex = (currentPage - 1) * recordsPerPage
-  const endIndex = startIndex + recordsPerPage
-  const currentBids = filteredBids.slice(startIndex, endIndex)
+  const totalRecords = pagination.total || filteredBids.length
+  const totalPages = pagination.total_pages || Math.ceil(totalRecords / recordsPerPage)
+  const currentBids = filteredBids
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
+    if (onPageChange) {
+      onPageChange(page)
+    }
   }
 
   const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1)
+    if (currentPage > 1) {
+      const newPage = currentPage - 1
+      setCurrentPage(newPage)
+      if (onPageChange) {
+        onPageChange(newPage)
+      }
+    }
   }
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1)
+    if (currentPage < totalPages) {
+      const newPage = currentPage + 1
+      setCurrentPage(newPage)
+      if (onPageChange) {
+        onPageChange(newPage)
+      }
+    }
   }
 
   const getStatusColor = (status) => {
@@ -103,13 +92,7 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
     return villageNames[villageKey] || villageKey
   }
 
-  if (!selectedGame && !selectedVillage) {
-    return (
-      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
-        <p className="text-gray-500">Select a game or village to view filtered bids</p>
-      </div>
-    )
-  }
+
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -127,11 +110,11 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="bg-blue-50 p-3 rounded-lg">
           <p className="text-sm text-blue-600 font-medium">Total Bids</p>
-          <p className="text-xl font-bold text-blue-800">{filteredBids.length}</p>
+          <p className="text-xl font-bold text-blue-800">{pagination.total}</p>
         </div>
         <div className="bg-green-50 p-3 rounded-lg">
           <p className="text-sm text-green-600 font-medium">Total Amount</p>
-          <p className="text-xl font-bold text-green-800">₹{filteredBids.reduce((sum, bid) => sum + bid.amount, 0).toLocaleString()}</p>
+          <p className="text-xl font-bold text-green-800">₹{pagination.total_amount}</p>
         </div>
         <div className="bg-purple-50 p-3 rounded-lg">
           <p className="text-sm text-purple-600 font-medium">Active Bids</p>
@@ -159,11 +142,11 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
             {currentBids.map((bid) => (
               <tr key={bid.id} className="border-b border-gray-100 hover:bg-gray-50">
                 <td className="py-3 px-2 text-sm text-gray-600">{getVillageName(bid.village)}</td>
-                <td className="py-3 px-2 text-sm font-medium text-gray-800">{bid.agent}</td>
-                <td className="py-3 px-2 text-sm text-gray-600">{getGameName(bid.game)}</td>
-                <td className="py-3 px-2 text-sm text-gray-600">{bid.session}</td>
-                <td className="py-3 px-2 text-sm text-gray-600">{bid.bidType}</td>
-                <td className="py-3 px-2 text-sm font-mono font-bold text-blue-600">{bid.number}</td>
+                <td className="py-3 px-2 text-sm font-medium text-gray-800">{bid.full_name}</td>
+                <td className="py-3 px-2 text-sm text-gray-600">{getGameName(bid.game_name)}</td>
+                <td className="py-3 px-2 text-sm text-gray-600">{bid.session_type}</td>
+                <td className="py-3 px-2 text-sm text-gray-600">{bid.bid_type_name}</td>
+                <td className="py-3 px-2 text-sm font-mono font-bold text-blue-600">{bid.bid_number}</td>
                 <td className="py-3 px-2 text-sm font-semibold text-green-600 text-right">₹{bid.amount}</td>
                 <td className="py-3 px-2 text-center">
                   <span className={`px-2 py-1 capitalize rounded-full text-xs font-medium ${getStatusColor(bid.status)}`}>
@@ -194,7 +177,7 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage }) {
       {filteredBids.length > 0 && (
         <div className="mt-4 flex justify-between items-center">
           <p className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredBids.length)} of {filteredBids.length} bids
+            Showing {((currentPage - 1) * recordsPerPage) + 1} to {Math.min(currentPage * recordsPerPage, totalRecords)} of {totalRecords} bids
           </p>
           <div className="flex items-center space-x-2">
             <button 

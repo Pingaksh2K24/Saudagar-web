@@ -1,18 +1,19 @@
 'use client'
 import { useState, useEffect } from 'react'
 import DashboardHeader from '../../components/dashboard/DashboardHeader'
-import StatsCards from '../../components/dashboard/StatsCards'
-import AgentOverview from '../../components/dashboard/AgentOverview'
-import LiveBetsTable from '../../components/dashboard/LiveBetsTable'
-import VillageWiseStats from '../../components/dashboard/VillageWiseStats'
-import QuickActions from '../../components/dashboard/QuickActions'
-import RecentActivity from '../../components/dashboard/RecentActivity'
-import TopNumbers from '../../components/dashboard/TopNumbers'
-import WeeklyChart from '../../components/dashboard/WeeklyChart'
-import GameWiseDetails from '../../components/dashboard/GameWiseDetails'
+// import StatsCards from '../../components/dashboard/StatsCards'
+// import AgentOverview from '../../components/dashboard/AgentOverview'
+// import LiveBetsTable from '../../components/dashboard/LiveBetsTable'
+// import VillageWiseStats from '../../components/dashboard/VillageWiseStats'
+// import QuickActions from '../../components/dashboard/QuickActions'
+// import RecentActivity from '../../components/dashboard/RecentActivity'
+// import TopNumbers from '../../components/dashboard/TopNumbers'
+// import WeeklyChart from '../../components/dashboard/WeeklyChart'
+// import GameWiseDetails from '../../components/dashboard/GameWiseDetails'
 import AddUserModal from '../users/AddUserModal'
 import Dropdown from '../../components/dropdown/page'
 import FilteredBidsTable from '../../components/dashboard/FilteredBidsTable'
+import { getUserSession } from '@/utils/cookies'
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState({
@@ -29,6 +30,8 @@ export default function DashboardPage() {
   const [selectedVillage, setSelectedVillage] = useState('')
   const [todayResults, setTodayResults] = useState([])
   const [villageList, setVillageList] = useState([])
+  const [adminBidsList, setAdminBidsList] = useState([])
+  const [pagination, setpagination] = useState({})
   const [loading, setLoading] = useState(false)
 
   const fetchTodayResults = async () => {
@@ -70,11 +73,53 @@ export default function DashboardPage() {
     }
   }
 
+  const fetchAdminBids = async (filters = {}) => {
+    console.log('Starting fetchAdminBids...')
+    try {
+      const requestBody = {
+        pagination: {
+          page: filters.page || 1,
+          limit: 10
+        },
+        filters: {
+          village: filters.village || '',
+          game_result_id: filters.game_result_id || null,
+          date: filters.date || new Date().toISOString().split('T')[0],
+          session_type: filters.session_type || '',
+          status: filters.status || ''
+        }
+      }
+      const session = getUserSession()
+      const response = await fetch('http://localhost:3000/api/bids/fetch-admin-bids', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token}`
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      console.log('Admin bids response status:', response.status)
+      if (response.ok) {
+        const resp = await response.json();
+        let adminBids = Array.isArray(resp.data.bids) ? resp.data.bids : []
+        console.log('Fetched Admin Bids:', resp)
+        setAdminBidsList(adminBids);
+        setpagination(resp.data.pagination || {})
+      } else {
+        console.log('Admin bids API failed with status:', response.status)
+      }
+    } catch (error) {
+      console.error('Error fetching admin bids:', error)
+    }
+  }
+
   useEffect(() => {
     console.log('Dashboard useEffect running...')
     setLoading(true)
     fetchTodayResults()
     fetchVillageList()
+    fetchAdminBids()
     setLoading(false)
   }, [])
 
@@ -85,7 +130,7 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <DashboardHeader onAddAgent={() => setIsAddUserModalOpen(true)} />
-      
+
       <div className="grid grid-cols-2 gap-4">
         <Dropdown
           options={todayResults}
@@ -103,7 +148,13 @@ export default function DashboardPage() {
         />
       </div>
 
-      <FilteredBidsTable selectedGame={selectedGame} selectedVillage={selectedVillage} />
+      <FilteredBidsTable
+        selectedGame={selectedGame}
+        selectedVillage={selectedVillage}
+        adminBids={adminBidsList}
+        pagination={pagination}
+        onPageChange={(page) => fetchAdminBids({ page })}
+      />
 
       {/* <StatsCards data={dashboardData} /> */}
 
