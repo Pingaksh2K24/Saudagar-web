@@ -6,7 +6,7 @@ import { ViewButton } from '../../../components/action/page'
 import Dropdown from '../../../components/dropdown/page'
 import StatsCard from '../../users/StatsCard'
 
-interface Transaction {
+interface Transaction extends Record<string, unknown> {
   id: number
   user_name: string
   type: string
@@ -14,6 +14,7 @@ interface Transaction {
   status: string
   date: string
   reference: string
+  [key: string]: unknown
 }
 
 const typeOptions = [
@@ -97,13 +98,13 @@ export default function AllTransactionsPage() {
         <div className="flex space-x-4">
           <Dropdown
             value={typeFilter}
-            onChange={setTypeFilter}
+            onChange={(value) => setTypeFilter(String(value))}
             options={typeOptions}
             placeholder="All Types"
           />
           <Dropdown
             value={statusFilter}
-            onChange={setStatusFilter}
+            onChange={(value) => setStatusFilter(String(value))}
             options={statusOptions}
             placeholder="All Status"
           />
@@ -138,7 +139,7 @@ export default function AllTransactionsPage() {
           {
             key: 'amount',
             label: 'Amount',
-            render: (value) => <span className="font-medium">₹{value}</span>
+            render: (value) => <span className="font-medium">₹{String(value)}</span>
           },
           {
             key: 'status',

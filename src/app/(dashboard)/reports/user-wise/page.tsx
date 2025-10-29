@@ -5,13 +5,14 @@ import StatsCard from '../../users/StatsCard'
 import DataTable from '../../../components/table/page'
 import { ViewButton } from '../../../components/action/page'
 
-interface UserReport {
+interface UserReport extends Record<string, unknown> {
   user_name: string
   total_bets: number
   total_amount: number
   total_wins: number
   profit_loss: number
   last_activity: string
+  [key: string]: unknown
 }
 
 export default function UserWiseReportsPage() {

@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Saudagar",
   description: "Zignuts - Game Challenge",
+  icons: {
+    icon: "/images/icon.png",
+  },
 };
 
 export default function RootLayout({

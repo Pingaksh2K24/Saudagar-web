@@ -13,17 +13,11 @@ import DashboardHeader from '../../components/dashboard/DashboardHeader'
 import AddUserModal from '../users/AddUserModal'
 import Dropdown from '../../components/dropdown/page'
 import FilteredBidsTable from '../../components/dashboard/FilteredBidsTable'
+
 import { getUserSession } from '@/utils/cookies'
 
 export default function DashboardPage() {
-  const [dashboardData, setDashboardData] = useState({
-    totalAgents: 52,
-    activeAgents: 48,
-    totalBets: 1247,
-    todayCollection: 45670,
-    pendingPayouts: 12450,
-    netProfit: 33220
-  })
+
 
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false)
   const [selectedGame, setSelectedGame] = useState('')
@@ -32,18 +26,18 @@ export default function DashboardPage() {
   const [villageList, setVillageList] = useState([])
   const [adminBidsList, setAdminBidsList] = useState([])
   const [pagination, setpagination] = useState({})
-  const [loading, setLoading] = useState(false)
+
 
   const fetchTodayResults = async () => {
     console.log('Starting fetchTodayResults...')
     try {
-      const response = await fetch('http://localhost:3000/api/results/today-game-results')
+      const response = await fetch('https://saudagar-backend.onrender.com/api/results/today-game-results')
       if (response.ok) {
         const data = await response.json()
         console.log('Fetched Today Results:', data.results)
-        const formattedGames = data?.results.map(game => ({
-          value: game.id,
-          label: game.game_name
+        const formattedGames = data?.results.map((game: unknown) => ({
+          value: (game as Record<string, unknown>).id,
+          label: (game as Record<string, unknown>).game_name
         }))
         setTodayResults(formattedGames);
       } else {
@@ -57,12 +51,12 @@ export default function DashboardPage() {
   const fetchVillageList = async () => {
     console.log('Starting fetchVillageList...')
     try {
-      const response = await fetch('http://localhost:3000/api/auth/village-list')
+      const response = await fetch('https://saudagar-backend.onrender.com/api/auth/village-list')
       if (response.ok) {
         const data = await response.json()
-        const formattedVillages = data?.users.map(village => ({
-          value: village.id,
-          label: village.village
+        const formattedVillages = data?.users.map((village: unknown) => ({
+          value: (village as Record<string, unknown>).id,
+          label: (village as Record<string, unknown>).village
         }))
         setVillageList(formattedVillages)
       } else {
@@ -73,24 +67,24 @@ export default function DashboardPage() {
     }
   }
 
-  const fetchAdminBids = async (filters = {}) => {
+  const fetchAdminBids = async (filters: Record<string, unknown> = {}) => {
     console.log('Starting fetchAdminBids...')
     try {
       const requestBody = {
         pagination: {
-          page: filters.page || 1,
+          page: (filters.page as number) || 1,
           limit: 10
         },
         filters: {
-          village: filters.village || '',
-          game_result_id: filters.game_result_id || null,
-          date: filters.date || new Date().toISOString().split('T')[0],
-          session_type: filters.session_type || '',
-          status: filters.status || ''
+          village: (filters.village as string) || '',
+          game_result_id: (filters.game_result_id as number) || null,
+          date: (filters.date as string) || new Date().toISOString().split('T')[0],
+          session_type: (filters.session_type as string) || '',
+          status: (filters.status as string) || ''
         }
       }
       const session = getUserSession()
-      const response = await fetch('http://localhost:3000/api/bids/fetch-admin-bids', {
+      const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch-admin-bids', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +96,7 @@ export default function DashboardPage() {
       console.log('Admin bids response status:', response.status)
       if (response.ok) {
         const resp = await response.json();
-        let adminBids = Array.isArray(resp.data.bids) ? resp.data.bids : []
+        const adminBids = Array.isArray(resp.data.bids) ? resp.data.bids : []
         console.log('Fetched Admin Bids:', resp)
         setAdminBidsList(adminBids);
         setpagination(resp.data.pagination || {})
@@ -116,11 +110,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     console.log('Dashboard useEffect running...')
-    setLoading(true)
     fetchTodayResults()
     fetchVillageList()
     fetchAdminBids()
-    setLoading(false)
   }, [])
 
   const handleUserAdded = () => {
@@ -130,19 +122,21 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <DashboardHeader onAddAgent={() => setIsAddUserModalOpen(true)} />
+      
+
 
       <div className="grid grid-cols-2 gap-4">
         <Dropdown
           options={todayResults}
           value={selectedGame}
-          onChange={setSelectedGame}
+          onChange={(value) => setSelectedGame(String(value))}
           placeholder="Select Game"
           className=""
         />
         <Dropdown
           options={villageList}
           value={selectedVillage}
-          onChange={setSelectedVillage}
+          onChange={(value) => setSelectedVillage(String(value))}
           placeholder="Select Village"
           className=""
         />
@@ -153,7 +147,7 @@ export default function DashboardPage() {
         selectedVillage={selectedVillage}
         adminBids={adminBidsList}
         pagination={pagination}
-        onPageChange={(page) => fetchAdminBids({ page })}
+        onPageChange={(page: unknown) => fetchAdminBids({ page: page as number })}
       />
 
       {/* <StatsCards data={dashboardData} /> */}

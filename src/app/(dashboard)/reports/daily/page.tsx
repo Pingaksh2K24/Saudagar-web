@@ -4,12 +4,13 @@ import { DateRange, TrendingUp, TrendingDown, AccountBalance } from '@mui/icons-
 import StatsCard from '../../users/StatsCard'
 import DataTable from '../../../components/table/page'
 
-interface DailyReport {
+interface DailyReport extends Record<string, unknown> {
   date: string
   total_bets: number
   total_amount: number
   total_wins: number
   profit_loss: number
+  [key: string]: unknown
 }
 
 export default function DailyReportsPage() {

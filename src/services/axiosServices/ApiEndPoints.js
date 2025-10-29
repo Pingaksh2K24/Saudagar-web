@@ -5,6 +5,13 @@ import { IsProdMode } from "../../utils/AppSetting";
 // export const APIURL = (IsProdMode) ? process.env.REACT_APP_PreProdApiURL : process.env.REACT_APP_DevApiURL;
 
 export const APIURL = "https://localhost:3000/api/";
+
+// export const APIURL = "https://saudagar-backend.onrender.com/api/";
+// 
+
+
+// PUT http://localhost:3000/api/games/update/{id}
+
 // export const APIURL = "https://sfcstagingapi.flyingcapetech.com/api/";
 
 

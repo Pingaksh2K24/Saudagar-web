@@ -19,7 +19,7 @@ interface DropdownProps {
 }
 
 export default function Dropdown({
-  options,
+  options = [],
   value,
   onChange,
   label,
@@ -58,7 +58,7 @@ export default function Dropdown({
             padding: '12px 16px',
             fontSize: '14px'
           }}>{placeholder}</option>
-          {options.map((option) => (
+          {(options || []).map((option) => (
             <option 
               key={option.value} 
               value={option.value}

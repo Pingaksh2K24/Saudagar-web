@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { AccountBalanceWallet, Search, TrendingUp, TrendingDown } from '@mui/icons-material'
 import Table from '../../../components/table/page'
 
-interface WalletData {
+interface WalletData extends Record<string, unknown> {
   user_id: number
   user_name: string
   balance: number
@@ -11,6 +11,7 @@ interface WalletData {
   total_withdrawals: number
   pending_withdrawals: number
   last_transaction: string
+  [key: string]: unknown
 }
 
 export default function WalletDetailsPage() {
@@ -24,7 +25,7 @@ export default function WalletDetailsPage() {
 
   const fetchWalletData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/users/wallet')
+      const response = await fetch('https://saudagar-backend.onrender.com/api/users/wallet')
       if (response.ok) {
         const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {
@@ -119,11 +120,11 @@ export default function WalletDetailsPage() {
               render: (_, wallet) => (
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium">{wallet.user_name.charAt(0)}</span>
+                    <span className="text-white font-medium">{String(wallet.user_name).charAt(0)}</span>
                   </div>
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{wallet.user_name}</div>
-                    <div className="text-sm text-gray-500">ID: {wallet.user_id}</div>
+                    <div className="text-sm font-medium text-gray-900">{String(wallet.user_name)}</div>
+                    <div className="text-sm text-gray-500">ID: {String(wallet.user_id)}</div>
                   </div>
                 </div>
               )
@@ -132,28 +133,28 @@ export default function WalletDetailsPage() {
               key: 'balance',
               label: 'Balance',
               render: (balance) => (
-                <span className="text-lg font-semibold text-green-600">₹{balance.toLocaleString()}</span>
+                <span className="text-lg font-semibold text-green-600">₹{Number(balance).toLocaleString()}</span>
               )
             },
             {
               key: 'total_deposits',
               label: 'Deposits',
               render: (deposits) => (
-                <span className="text-sm text-gray-900">₹{deposits.toLocaleString()}</span>
+                <span className="text-sm text-gray-900">₹{Number(deposits).toLocaleString()}</span>
               )
             },
             {
               key: 'total_withdrawals',
               label: 'Withdrawals',
               render: (withdrawals) => (
-                <span className="text-sm text-gray-900">₹{withdrawals.toLocaleString()}</span>
+                <span className="text-sm text-gray-900">₹{Number(withdrawals).toLocaleString()}</span>
               )
             },
             {
               key: 'pending_withdrawals',
               label: 'Pending',
               render: (pending) => (
-                <span className="text-sm font-medium text-orange-600">₹{pending.toLocaleString()}</span>
+                <span className="text-sm font-medium text-orange-600">₹{Number(pending).toLocaleString()}</span>
               )
             },
             {
@@ -161,7 +162,7 @@ export default function WalletDetailsPage() {
               label: 'Last Transaction',
               render: (date) => (
                 <span className="text-sm text-gray-500">
-                  {new Date(date).toLocaleDateString()}
+                  {new Date(String(date)).toLocaleDateString()}
                 </span>
               )
             },

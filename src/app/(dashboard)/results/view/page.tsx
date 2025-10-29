@@ -5,12 +5,13 @@ import DataTable from '../../../components/table/page'
 import { ViewButton, EditButton } from '../../../components/action/page'
 import Dropdown from '../../../components/dropdown/page'
 
-interface Result {
+interface Result extends Record<string, unknown> {
   id: number
   game_name: string
   result_number: string
   date: string
   status: string
+  [key: string]: unknown
 }
 
 const gameOptions = [
@@ -58,7 +59,7 @@ export default function ViewResultsPage() {
         </div>
         <Dropdown
           value={selectedGame}
-          onChange={setSelectedGame}
+          onChange={(value) => setSelectedGame(String(value))}
           options={gameOptions}
           placeholder="All Games"
           className="min-w-32"

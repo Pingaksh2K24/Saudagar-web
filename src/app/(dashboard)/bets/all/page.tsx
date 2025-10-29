@@ -9,7 +9,7 @@ import BetDetailsModal from '../BetDetailsModal'
 import React from 'react'
 import { getUserSession } from '@/utils/cookies'
 
-interface Bet {
+interface Bet extends Record<string, unknown> {
   id: number
   user_name: string
   game_name: string
@@ -18,6 +18,7 @@ interface Bet {
   amount: number
   status: 'pending' | 'won' | 'lost'
   created_at: string
+  [key: string]: unknown
 }
 
 const betTypeOptions = [
@@ -38,7 +39,7 @@ export default function AllBetsPage() {
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedBet, setSelectedBet] = useState(null)
+  const [selectedBet, setSelectedBet] = useState<Bet | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedGame, setSelectedGame] = useState('')
@@ -60,7 +61,7 @@ export default function AllBetsPage() {
       setLoading(true)
       const session = getUserSession()
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3000/api/bids/fetch', {
+      const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.token}`,
@@ -102,7 +103,7 @@ export default function AllBetsPage() {
 
   const nextPage = async () => {
     const token = localStorage.getItem('token')
-    const response = await fetch('http://localhost:3000/api/bids/fetch', {
+    const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -247,7 +248,7 @@ export default function AllBetsPage() {
           {
             key: 'amount',
             label: 'Amount',
-            render: (value) => <span className="text-sm font-medium">₹{value}</span>
+            render: (value) => <span className="text-sm font-medium">₹{String(value)}</span>
           },
           {
             key: 'status',

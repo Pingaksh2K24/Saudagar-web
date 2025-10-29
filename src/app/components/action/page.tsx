@@ -69,3 +69,7 @@ export function DeleteButton({ onClick, size = 'medium', disabled = false }: Act
     </button>
   )
 }
+
+export default function ActionButtons() {
+  return null
+}

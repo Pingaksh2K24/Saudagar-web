@@ -4,7 +4,16 @@ import { Close, AttachMoney, Person, SportsEsports, Schedule } from '@mui/icons-
 interface BetDetailsModalProps {
   isOpen: boolean
   onClose: () => void
-  bet: any
+  bet: {
+    id: number
+    user_name: string
+    game_name: string
+    bet_type: string
+    bet_number: string
+    amount: number
+    status: string
+    created_at: string
+  } | null
 }
 
 export default function BetDetailsModal({ isOpen, onClose, bet }: BetDetailsModalProps) {

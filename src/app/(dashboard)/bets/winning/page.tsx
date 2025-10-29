@@ -5,7 +5,7 @@ import DataTable from '../../../components/table/page'
 import { ViewButton } from '../../../components/action/page'
 import StatsCard from '../../users/StatsCard'
 
-interface WinningBet {
+interface WinningBet extends Record<string, unknown> {
   id: number
   user_name: string
   game_name: string
@@ -15,6 +15,7 @@ interface WinningBet {
   win_amount: number
   multiplier: number
   created_at: string
+  [key: string]: unknown
 }
 
 export default function WinningBetsPage() {
@@ -135,17 +136,17 @@ export default function WinningBetsPage() {
           {
             key: 'bet_amount',
             label: 'Bet Amount',
-            render: (value) => <span className="text-sm">₹{value}</span>
+            render: (value) => <span className="text-sm">₹{String(value)}</span>
           },
           {
             key: 'win_amount',
             label: 'Win Amount',
-            render: (value) => <span className="text-sm font-bold text-green-600">₹{value}</span>
+            render: (value) => <span className="text-sm font-bold text-green-600">₹{String(value)}</span>
           },
           {
             key: 'multiplier',
             label: 'Multiplier',
-            render: (value) => <span className="text-sm font-medium">{value}x</span>
+            render: (value) => <span className="text-sm font-medium">{String(value)}x</span>
           },
           {
             key: 'created_at',

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useProjectStore } from '../../store/projectStore'
 import { EditButton, DeleteButton } from '../../components/action/page'
@@ -8,7 +8,7 @@ import ConfirmationDialog from '../../components/common/ConfirmationDialog'
 import { showSuccess, showError } from '../../../../utils/notification'
 import { capitalize } from '../../../../utils/helper'
 
-export default function TasksPage() {
+function TasksContent() {
   const [currentPage, setCurrentPage] = useState(1)
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -314,5 +314,13 @@ export default function TasksPage() {
         loading={deleteLoading}
       />
     </div>
+  )
+}
+
+export default function TasksPage() {
+  return (
+    <Suspense fallback={<div className="p-6"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div></div>}>
+      <TasksContent />
+    </Suspense>
   )
 }

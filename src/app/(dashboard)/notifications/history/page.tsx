@@ -6,7 +6,7 @@ import { ViewButton } from '../../../components/action/page'
 import Dropdown from '../../../components/dropdown/page'
 import StatsCard from '../../users/StatsCard'
 
-interface MessageHistory {
+interface MessageHistory extends Record<string, unknown> {
   id: number
   title: string
   recipient: string
@@ -14,6 +14,7 @@ interface MessageHistory {
   sent_date: string
   delivery_count: number
   type: string
+  [key: string]: unknown
 }
 
 const statusOptions = [
@@ -101,13 +102,13 @@ export default function MessageHistoryPage() {
         <div className="flex space-x-4">
           <Dropdown
             value={statusFilter}
-            onChange={setStatusFilter}
+            onChange={(value) => setStatusFilter(String(value))}
             options={statusOptions}
             placeholder="All Status"
           />
           <Dropdown
             value={typeFilter}
-            onChange={setTypeFilter}
+            onChange={(value) => setTypeFilter(String(value))}
             options={typeOptions}
             placeholder="All Types"
           />

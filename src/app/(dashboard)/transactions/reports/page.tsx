@@ -75,7 +75,7 @@ export default function TransactionReportsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Report Type</label>
               <Dropdown
                 value={reportType}
-                onChange={setReportType}
+                onChange={(value) => setReportType(String(value))}
                 options={reportTypeOptions}
                 placeholder="Select Report Type"
               />
@@ -108,7 +108,7 @@ export default function TransactionReportsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Export Format</label>
               <Dropdown
                 value={format}
-                onChange={setFormat}
+                onChange={(value) => setFormat(String(value))}
                 options={formatOptions}
                 placeholder="Select Format"
               />
@@ -130,12 +130,12 @@ export default function TransactionReportsPage() {
           
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="text-sm text-gray-600">Today's Deposits</span>
+              <span className="text-sm text-gray-600">Today&apos;s Deposits</span>
               <span className="font-medium text-green-600">₹15,000</span>
             </div>
             
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-              <span className="text-sm text-gray-600">Today's Withdrawals</span>
+              <span className="text-sm text-gray-600">Today&apos;s Withdrawals</span>
               <span className="font-medium text-red-600">₹8,500</span>
             </div>
             

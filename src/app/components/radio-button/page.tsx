@@ -6,7 +6,7 @@ interface RadioOption {
 }
 
 interface RadioButtonProps {
-  options: RadioOption[]
+  options?: RadioOption[]
   value: string | number
   onChange: (value: string | number) => void
   name: string
@@ -18,7 +18,7 @@ interface RadioButtonProps {
 }
 
 export default function RadioButton({
-  options,
+  options = [],
   value,
   onChange,
   name,
@@ -36,7 +36,7 @@ export default function RadioButton({
         </label>
       )}
       <div className={`${direction === 'horizontal' ? 'flex space-x-4' : 'space-y-2'}`}>
-        {options.map((option) => (
+        {options?.map((option) => (
           <label 
             key={option.value} 
             className={`flex items-center cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}

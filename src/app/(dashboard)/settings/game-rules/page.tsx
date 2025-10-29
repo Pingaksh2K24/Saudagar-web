@@ -40,7 +40,7 @@ export default function GameRulesPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Game Type</label>
               <Dropdown
                 value={selectedGame}
-                onChange={setSelectedGame}
+                onChange={(value) => setSelectedGame(String(value))}
                 options={gameOptions}
                 placeholder="Select Game Type"
               />

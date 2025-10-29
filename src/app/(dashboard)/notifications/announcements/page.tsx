@@ -5,13 +5,14 @@ import Button from '../../../components/button/page'
 import DataTable from '../../../components/table/page'
 import { ViewButton, EditButton, DeleteButton } from '../../../components/action/page'
 
-interface AnnouncementData {
+interface AnnouncementData extends Record<string, unknown> {
   id: number
   title: string
   content: string
   status: string
   created_date: string
   expires_date: string
+  [key: string]: unknown
 }
 
 export default function ManageAnnouncementsPage() {

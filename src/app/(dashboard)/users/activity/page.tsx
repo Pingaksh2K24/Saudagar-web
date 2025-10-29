@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { TrendingUp, Search, FilterList, Login, Logout, AttachMoney } from '@mui/icons-material'
 import Table from '../../../components/table/page'
 
-interface ActivityLog {
+interface ActivityLog extends Record<string, unknown> {
   id: number
   user_id: number
   user_name: string
@@ -12,6 +12,7 @@ interface ActivityLog {
   amount?: number
   ip_address: string
   timestamp: string
+  [key: string]: unknown
 }
 
 export default function UserActivityLogsPage() {
@@ -28,16 +29,16 @@ export default function UserActivityLogsPage() {
     try {
       // Mock data for now
       const mockData = [
-        { id: 1, user_id: 101, user_name: 'John Doe', activity_type: 'login', description: 'User logged in successfully', ip_address: '192.168.1.100', timestamp: '2024-01-03T10:30:00Z' },
-        { id: 2, user_id: 102, user_name: 'Jane Smith', activity_type: 'bet_placed', description: 'Placed bet on Mumbai Day - Single 5', amount: 500, ip_address: '192.168.1.101', timestamp: '2024-01-03T11:15:00Z' },
-        { id: 3, user_id: 103, user_name: 'Mike Johnson', activity_type: 'deposit', description: 'Wallet deposit via UPI', amount: 2000, ip_address: '192.168.1.102', timestamp: '2024-01-03T09:45:00Z' },
-        { id: 4, user_id: 101, user_name: 'John Doe', activity_type: 'withdrawal', description: 'Withdrawal request submitted', amount: 1500, ip_address: '192.168.1.100', timestamp: '2024-01-03T14:20:00Z' },
-        { id: 5, user_id: 104, user_name: 'Sarah Davis', activity_type: 'login', description: 'User logged in from mobile app', ip_address: '192.168.1.103', timestamp: '2024-01-03T08:30:00Z' },
-        { id: 6, user_id: 102, user_name: 'Jane Smith', activity_type: 'bet_placed', description: 'Placed bet on Delhi Night - Jodi 56', amount: 300, ip_address: '192.168.1.101', timestamp: '2024-01-03T16:45:00Z' },
-        { id: 7, user_id: 105, user_name: 'Bob Wilson', activity_type: 'logout', description: 'User logged out', ip_address: '192.168.1.104', timestamp: '2024-01-03T17:30:00Z' },
-        { id: 8, user_id: 103, user_name: 'Mike Johnson', activity_type: 'bet_placed', description: 'Placed bet on Gali Game - Panna 123', amount: 200, ip_address: '192.168.1.102', timestamp: '2024-01-03T12:00:00Z' },
-        { id: 9, user_id: 106, user_name: 'Alice Brown', activity_type: 'deposit', description: 'Wallet deposit via Bank Transfer', amount: 5000, ip_address: '192.168.1.105', timestamp: '2024-01-03T13:15:00Z' },
-        { id: 10, user_id: 104, user_name: 'Sarah Davis', activity_type: 'withdrawal', description: 'Withdrawal processed successfully', amount: 800, ip_address: '192.168.1.103', timestamp: '2024-01-03T15:45:00Z' }
+        { id: 1, user_id: 101, user_name: 'John Doe', activity_type: 'login' as const, description: 'User logged in successfully', ip_address: '192.168.1.100', timestamp: '2024-01-03T10:30:00Z' },
+        { id: 2, user_id: 102, user_name: 'Jane Smith', activity_type: 'bet_placed' as const, description: 'Placed bet on Mumbai Day - Single 5', amount: 500, ip_address: '192.168.1.101', timestamp: '2024-01-03T11:15:00Z' },
+        { id: 3, user_id: 103, user_name: 'Mike Johnson', activity_type: 'deposit' as const, description: 'Wallet deposit via UPI', amount: 2000, ip_address: '192.168.1.102', timestamp: '2024-01-03T09:45:00Z' },
+        { id: 4, user_id: 101, user_name: 'John Doe', activity_type: 'withdrawal' as const, description: 'Withdrawal request submitted', amount: 1500, ip_address: '192.168.1.100', timestamp: '2024-01-03T14:20:00Z' },
+        { id: 5, user_id: 104, user_name: 'Sarah Davis', activity_type: 'login' as const, description: 'User logged in from mobile app', ip_address: '192.168.1.103', timestamp: '2024-01-03T08:30:00Z' },
+        { id: 6, user_id: 102, user_name: 'Jane Smith', activity_type: 'bet_placed' as const, description: 'Placed bet on Delhi Night - Jodi 56', amount: 300, ip_address: '192.168.1.101', timestamp: '2024-01-03T16:45:00Z' },
+        { id: 7, user_id: 105, user_name: 'Bob Wilson', activity_type: 'logout' as const, description: 'User logged out', ip_address: '192.168.1.104', timestamp: '2024-01-03T17:30:00Z' },
+        { id: 8, user_id: 103, user_name: 'Mike Johnson', activity_type: 'bet_placed' as const, description: 'Placed bet on Gali Game - Panna 123', amount: 200, ip_address: '192.168.1.102', timestamp: '2024-01-03T12:00:00Z' },
+        { id: 9, user_id: 106, user_name: 'Alice Brown', activity_type: 'deposit' as const, description: 'Wallet deposit via Bank Transfer', amount: 5000, ip_address: '192.168.1.105', timestamp: '2024-01-03T13:15:00Z' },
+        { id: 10, user_id: 104, user_name: 'Sarah Davis', activity_type: 'withdrawal' as const, description: 'Withdrawal processed successfully', amount: 800, ip_address: '192.168.1.103', timestamp: '2024-01-03T15:45:00Z' }
       ]
       setActivities(mockData)
     } catch (error) {
@@ -174,8 +175,8 @@ export default function UserActivityLogsPage() {
                     <span className="text-white text-xs font-medium">{activity.user_name.charAt(0)}</span>
                   </div>
                   <div className="ml-3">
-                    <div className="text-sm font-medium text-gray-900">{activity.user_name}</div>
-                    <div className="text-sm text-gray-500">ID: {activity.user_id}</div>
+                    <div className="text-sm font-medium text-gray-900">{String(activity.user_name)}</div>
+                    <div className="text-sm text-gray-500">ID: {String(activity.user_id)}</div>
                   </div>
                 </div>
               )
@@ -185,9 +186,9 @@ export default function UserActivityLogsPage() {
               label: 'Activity',
               render: (type) => (
                 <div className="flex items-center">
-                  {getActivityIcon(type)}
-                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getActivityColor(type)}`}>
-                    {type.replace('_', ' ')}
+                  {getActivityIcon(String(type))}
+                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getActivityColor(String(type))}`}>
+                    {String(type).replace('_', ' ')}
                   </span>
                 </div>
               )
@@ -196,7 +197,7 @@ export default function UserActivityLogsPage() {
               key: 'description',
               label: 'Description',
               render: (description) => (
-                <div className="text-sm text-gray-900">{description}</div>
+                <div className="text-sm text-gray-900">{String(description)}</div>
               )
             },
             {
@@ -204,7 +205,7 @@ export default function UserActivityLogsPage() {
               label: 'Amount',
               render: (amount) => (
                 <span className="text-sm text-gray-900">
-                  {amount ? `₹${amount.toLocaleString()}` : '-'}
+                  {amount ? `₹${Number(amount).toLocaleString()}` : '-'}
                 </span>
               )
             },
@@ -212,7 +213,7 @@ export default function UserActivityLogsPage() {
               key: 'ip_address',
               label: 'IP Address',
               render: (ip) => (
-                <span className="text-sm text-gray-500">{ip}</span>
+                <span className="text-sm text-gray-500">{String(ip)}</span>
               )
             },
             {
@@ -220,7 +221,7 @@ export default function UserActivityLogsPage() {
               label: 'Time',
               render: (timestamp) => (
                 <span className="text-sm text-gray-500">
-                  {new Date(timestamp).toLocaleString()}
+                  {new Date(String(timestamp)).toLocaleString()}
                 </span>
               )
             }

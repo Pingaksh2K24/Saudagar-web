@@ -9,16 +9,19 @@ import AddUserModal from '../AddUserModal'
 import EditUserModal from '../EditUserModal'
 import { getUserSession } from '@/utils/cookies'
 import Button from '../../../components/button/page'
-// import { showSuccess, showError } from '../../../../utils/notification'
+// 
 
-interface User {
+interface User extends Record<string, unknown> {
   id: number
   full_name: string
   email: string
   mobile_number: string
   role: string
   status: string
+  village: string
+  address: string
   created_at: string
+  [key: string]: unknown
 }
 
 const roleOptions = [
@@ -39,14 +42,14 @@ export default function AllUsersPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   useEffect(() => {
     fetchUsers()
   }, [])
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/auth/getAllUserList');
+      const response = await fetch('https://saudagar-backend.onrender.com/api/auth/getAllUserList');
       console.log('Fetch All User List response:', response);
       if (response.ok && response.status === 200) {
         const contentType = response.headers.get('content-type')
@@ -60,7 +63,7 @@ export default function AllUsersPage() {
       } else {
         setUsers([])
       }
-    } catch (error) {
+    } catch {
       setUsers([])
     } finally {
       setLoading(false)
@@ -70,7 +73,7 @@ export default function AllUsersPage() {
   const handleDeleteUser = async (userId: number) => {
     try {
       const session = getUserSession()
-      const response = await fetch(`http://localhost:3000/api/auth/users/${userId}`, {
+      const response = await fetch(`https://saudagar-backend.onrender.com/api/auth/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${session?.token}`,
@@ -79,14 +82,14 @@ export default function AllUsersPage() {
       })
       
       if (response.ok) {
-        showSuccess('User deleted successfully!')
+        console.log('User deleted successfully!')
         fetchUsers()
       } else {
-        showError('Failed to delete user')
+        console.error('Failed to delete user')
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-      showError('Error deleting user')
+      console.error('Error deleting user')
     }
   }
 
@@ -267,7 +270,7 @@ export default function AllUsersPage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onUserUpdated={fetchUsers}
-        user={selectedUser}
+        user={selectedUser as User | null}
       />
     </div>
   )

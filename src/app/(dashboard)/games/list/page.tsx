@@ -10,7 +10,7 @@ import AddGameModal from '../../../components/AddGameModal'
 import EditGameModal from '../../../components/EditGameModal'
 import { getUserSession } from '@/utils/cookies'
 
-interface Game {
+interface Game extends Record<string, unknown> {
   id: number
   name: string
   type: string
@@ -18,6 +18,7 @@ interface Game {
   min_bet: number
   max_bet: number
   created_at: string
+  [key: string]: unknown
 }
 
 const gameTypeOptions = [
@@ -39,7 +40,7 @@ export default function AllGamesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
-  const [selectedGameData, setSelectedGameData] = useState<any>(null)
+  const [selectedGameData, setSelectedGameData] = useState<{ game: Game } | null>(null)
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function AllGamesPage() {
   const fetchGames = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:3000/api/games/all', {
+      const response = await fetch('https://saudagar-backend.onrender.com/api/games/all', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -69,7 +70,7 @@ export default function AllGamesPage() {
       try {
 
         const session = getUserSession()
-        const response = await fetch(`http://localhost:3000/api/games/delete/${gameId}`, {
+        const response = await fetch(`https://saudagar-backend.onrender.com/api/games/delete/${gameId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${session?.token}`,
@@ -89,7 +90,7 @@ export default function AllGamesPage() {
 
   const handleEditGame = async (gameId: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/games/${gameId}`, {
+      const response = await fetch(`https://saudagar-backend.onrender.com/api/games/${gameId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -248,12 +249,12 @@ export default function AllGamesPage() {
             {
               key: 'min_bet_amount',
               label: 'Min Bet',
-              render: (value) => <span className="text-sm">₹{value}</span>
+              render: (value) => <span className="text-sm">₹{String(value)}</span>
             },
             {
               key: 'max_bet_amount',
               label: 'Max Bet',
-              render: (value) => <span className="text-sm">₹{value}</span>
+              render: (value) => <span className="text-sm">₹{String(value)}</span>
             },
             {
               key: 'created_at',
@@ -303,16 +304,16 @@ export default function AllGamesPage() {
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{game?.game_name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">{String(game?.game_name)}</h3>
 
                 <div className="bg-gray-50 rounded-lg p-4 mb-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-600">Min Bet</span>
-                    <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-1 rounded">₹{game.min_bet_amount}</span>
+                    <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-1 rounded">₹{String(game.min_bet_amount)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-600">Max Bet</span>
-                    <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded">₹{game.max_bet_amount}</span>
+                    <span className="text-sm font-bold text-red-600 bg-red-50 px-2 py-1 rounded">₹{String(game.max_bet_amount)}</span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                     <span className="text-xs text-gray-500">Created</span>
@@ -348,7 +349,7 @@ export default function AllGamesPage() {
       <AddGameModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onProjectCreated={(game) => {
+        onProjectCreated={(game: unknown) => {
           console.log('Game created:', game)
           fetchGames() // Refresh games list
         }}
@@ -363,7 +364,7 @@ export default function AllGamesPage() {
         }}
         gameId={selectedGameId}
         gameData={selectedGameData?.game}
-        onGameUpdated={(updatedGame) => {
+        onGameUpdated={(updatedGame: unknown) => {
           console.log('Game updated:', updatedGame)
           fetchGames() // Refresh games list
         }}

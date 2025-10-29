@@ -47,7 +47,7 @@ export default function SendNotificationPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Send To</label>
               <Dropdown
                 value={recipient}
-                onChange={setRecipient}
+                onChange={(value) => setRecipient(String(value))}
                 options={recipientOptions}
                 placeholder="Select Recipients"
               />
@@ -95,7 +95,7 @@ export default function SendNotificationPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
               <Dropdown
                 value={priority}
-                onChange={setPriority}
+                onChange={(value) => setPriority(String(value))}
                 options={priorityOptions}
                 placeholder="Select Priority"
               />

@@ -10,7 +10,16 @@ interface EditUserModalProps {
   isOpen: boolean
   onClose: () => void
   onUserUpdated: () => void
-  user: any
+  user: {
+    id: number
+    full_name: string
+    email: string
+    mobile_number: string
+    role: string
+    status: string
+    village: string
+    address: string
+  } | null
 }
 
 export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: EditUserModalProps) {
@@ -38,7 +47,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
   ]
 
   useEffect(() => {
-    if (user) {
+    if (user && typeof user === 'object') {
       setFormData({
         full_name: user.full_name || '',
         email: user.email || '',
@@ -53,6 +62,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!user) return
     setLoading(true)
 
 
@@ -70,7 +80,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
         address: formData.address
       }
       
-      const response = await fetch(`http://localhost:3000/api/auth/users/${user.id}`, {
+      const response = await fetch(`https://saudagar-backend.onrender.com/api/auth/users/${user.id}`, {
         method: 'PUT',
         mode: 'cors',
         credentials: 'include',
@@ -144,7 +154,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
             <Dropdown
               options={roleOptions}
               value={formData.role}
-              onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
+              onChange={(value) => setFormData(prev => ({ ...prev, role: String(value) }))}
               placeholder="Select Role"
               required
             />
@@ -154,7 +164,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
             <Dropdown
               options={statusOptions}
               value={formData.status}
-              onChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+              onChange={(value) => setFormData(prev => ({ ...prev, status: String(value) }))}
               placeholder="Select Status"
               required
             />

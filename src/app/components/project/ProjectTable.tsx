@@ -1,5 +1,5 @@
 'use client'
-import DataTable, { Column, Filter, StatsCard } from '../table/page'
+import DataTable, { Column } from '../table/page'
 import { EditButton, DeleteButton, ViewButton } from '../action/page'
 
 interface Task {
@@ -8,7 +8,7 @@ interface Task {
   status: 'pending' | 'completed'
 }
 
-interface Project {
+interface Project extends Record<string, unknown> {
   id: number
   name: string
   description: string
@@ -20,6 +20,7 @@ interface Project {
   team: string[]
   tasks: Task[]
   budget?: string
+  [key: string]: unknown
 }
 
 interface ProjectTableProps {
@@ -135,60 +136,15 @@ export default function ProjectTable({ projects }: ProjectTableProps) {
     }
   ]
 
-  const filters: Filter[] = [
-    {
-      key: 'status',
-      label: 'Status',
-      options: [
-        { value: 'active', label: 'Active' },
-        { value: 'completed', label: 'Completed' },
-        { value: 'on-hold', label: 'On Hold' }
-      ]
-    },
-    {
-      key: 'priority',
-      label: 'Priority',
-      options: [
-        { value: 'high', label: 'High' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'low', label: 'Low' }
-      ]
-    }
-  ]
 
-  const activeCount = projects.filter(p => p.status === 'active').length
-  const completedCount = projects.filter(p => p.status === 'completed').length
-  const onHoldCount = projects.filter(p => p.status === 'on-hold').length
 
-  const statsCards: StatsCard[] = [
-    {
-      title: 'Total Projects',
-      value: projects.length,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600'
-    },
-    {
-      title: 'Active',
-      value: activeCount,
-      color: 'bg-gradient-to-r from-green-500 to-green-600'
-    },
-    {
-      title: 'Completed',
-      value: completedCount,
-      color: 'bg-gradient-to-r from-blue-600 to-indigo-600'
-    },
-    {
-      title: 'On Hold',
-      value: onHoldCount,
-      color: 'bg-gradient-to-r from-yellow-500 to-orange-500'
-    }
-  ]
+
 
   return (
     <DataTable<Project>
       data={projects}
       columns={columns}
-      filters={filters}
-      statsCards={statsCards}
+
       searchPlaceholder="Search projects..."
       emptyMessage="No projects found"
       pagination={false}

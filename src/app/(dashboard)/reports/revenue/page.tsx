@@ -39,7 +39,7 @@ export default function RevenueChartPage() {
         </div>
         <Dropdown
           value={selectedPeriod}
-          onChange={setSelectedPeriod}
+          onChange={(value) => setSelectedPeriod(String(value))}
           options={periodOptions}
           placeholder="Select Period"
           className="min-w-32"

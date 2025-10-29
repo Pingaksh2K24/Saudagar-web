@@ -1,16 +1,17 @@
 'use client'
 import { useState } from 'react'
-import DataTable, { Column, Filter, StatsCard } from '../table/page'
+import DataTable, { Column } from '../table/page'
 import { EditButton, DeleteButton } from '../action/page'
 import TaskModal from '../modal/TaskModal'
 
-interface Task {
+interface Task extends Record<string, unknown> {
   id?: number
   title: string
   status: 'pending' | 'completed'
   priority?: 'low' | 'medium' | 'high'
   dueDate?: string
   project?: string
+  [key: string]: unknown
 }
 
 interface TaskTableProps {
@@ -106,61 +107,9 @@ export default function TaskTable({ tasks = [] }: TaskTableProps) {
     }
   ]
 
-  const filters: Filter[] = [
-    {
-      key: 'status',
-      label: 'Status',
-      options: [
-        { value: 'pending', label: 'Pending' },
-        { value: 'completed', label: 'Completed' }
-      ]
-    },
-    {
-      key: 'priority',
-      label: 'Priority',
-      options: [
-        { value: 'high', label: 'High' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'low', label: 'Low' }
-      ]
-    }
-  ]
 
-  const completedCount = tasks?.filter(t => t.status === 'completed').length || 0
-  const pendingCount = tasks?.filter(t => t.status === 'pending').length || 0
 
-  const statsCards: StatsCard[] = [
-    {
-      title: 'Total Tasks',
-      value: tasks?.length || 0,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-        </svg>
-      )
-    },
-    {
-      title: 'Completed',
-      value: completedCount,
-      color: 'bg-gradient-to-r from-green-500 to-green-600',
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-      )
-    },
-    {
-      title: 'Pending',
-      value: pendingCount,
-      color: 'bg-gradient-to-r from-yellow-500 to-orange-500',
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-        </svg>
-      )
-    }
-  ]
+
 
   return (
     <div className="space-y-6">
@@ -180,8 +129,6 @@ export default function TaskTable({ tasks = [] }: TaskTableProps) {
       <DataTable<Task>
         data={tasks}
         columns={columns}
-        filters={filters}
-        statsCards={statsCards}
         searchPlaceholder="Search tasks..."
         emptyMessage="No tasks found"
         actions={(row) => (
@@ -201,7 +148,7 @@ export default function TaskTable({ tasks = [] }: TaskTableProps) {
       <TaskModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onSave={handleSaveTask}
+        onSave={(task) => handleSaveTask(task as Task)}
         task={selectedTask}
         mode={modalMode}
       />

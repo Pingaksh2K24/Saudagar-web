@@ -34,7 +34,7 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:3000/api/auth/logout', {
+      await fetch('https://saudagar-backend.onrender.com/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })

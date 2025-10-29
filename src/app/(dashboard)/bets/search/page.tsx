@@ -6,7 +6,7 @@ import { ViewButton } from '../../../components/action/page'
 import Dropdown from '../../../components/dropdown/page'
 import Button from '../../../components/button/page'
 
-interface SearchResult {
+interface SearchResult extends Record<string, unknown> {
   id: number
   user_name: string
   game_name: string
@@ -15,6 +15,7 @@ interface SearchResult {
   amount: number
   status: string
   created_at: string
+  [key: string]: unknown
 }
 
 const gameOptions = [
@@ -254,7 +255,7 @@ export default function SearchBetsPage() {
                 {
                   key: 'amount',
                   label: 'Amount',
-                  render: (value) => <span className="text-sm font-medium">₹{value}</span>
+                  render: (value) => <span className="text-sm font-medium">₹{String(value)}</span>
                 },
                 {
                   key: 'status',

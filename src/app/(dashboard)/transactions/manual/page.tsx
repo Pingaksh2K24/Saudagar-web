@@ -54,7 +54,7 @@ export default function ManualAdjustmentsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Select User</label>
               <Dropdown
                 value={selectedUser}
-                onChange={setSelectedUser}
+                onChange={(value) => setSelectedUser(String(value))}
                 options={userOptions}
                 placeholder="Choose User"
               />
@@ -64,7 +64,7 @@ export default function ManualAdjustmentsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Adjustment Type</label>
               <Dropdown
                 value={adjustmentType}
-                onChange={setAdjustmentType}
+                onChange={(value) => setAdjustmentType(String(value))}
                 options={typeOptions}
                 placeholder="Select Type"
               />

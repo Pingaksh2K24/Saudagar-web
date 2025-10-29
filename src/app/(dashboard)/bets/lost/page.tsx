@@ -5,7 +5,7 @@ import DataTable from '../../../components/table/page'
 import { ViewButton } from '../../../components/action/page'
 import StatsCard from '../../users/StatsCard'
 
-interface LostBet {
+interface LostBet extends Record<string, unknown> {
   id: number
   user_name: string
   game_name: string
@@ -14,6 +14,7 @@ interface LostBet {
   amount: number
   winning_number: string
   created_at: string
+  [key: string]: unknown
 }
 
 export default function LostBetsPage() {
@@ -140,7 +141,7 @@ export default function LostBetsPage() {
           {
             key: 'amount',
             label: 'Lost Amount',
-            render: (value) => <span className="text-sm font-bold text-red-600">₹{value}</span>
+            render: (value) => <span className="text-sm font-bold text-red-600">₹{String(value)}</span>
           },
           {
             key: 'created_at',

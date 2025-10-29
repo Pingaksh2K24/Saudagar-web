@@ -5,7 +5,7 @@ import DataTable from '../../../components/table/page'
 import { ViewButton } from '../../../components/action/page'
 import StatsCard from '../../users/StatsCard'
 
-interface PendingBet {
+interface PendingBet extends Record<string, unknown> {
   id: number
   user_name: string
   game_name: string
@@ -14,6 +14,7 @@ interface PendingBet {
   amount: number
   draw_time: string
   created_at: string
+  [key: string]: unknown
 }
 
 export default function PendingBetsPage() {
@@ -133,7 +134,7 @@ export default function PendingBetsPage() {
           {
             key: 'amount',
             label: 'Amount',
-            render: (value) => <span className="text-sm font-medium">₹{value}</span>
+            render: (value) => <span className="text-sm font-medium">₹{String(value)}</span>
           },
           {
             key: 'draw_time',

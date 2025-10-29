@@ -4,13 +4,14 @@ import { TrendingUp, SportsEsports, BarChart } from '@mui/icons-material'
 import StatsCard from '../../users/StatsCard'
 import DataTable from '../../../components/table/page'
 
-interface GameReport {
+interface GameReport extends Record<string, unknown> {
   game_name: string
   total_bets: number
   total_amount: number
   total_wins: number
   profit_loss: number
   win_percentage: number
+  [key: string]: unknown
 }
 
 export default function GameWiseReportsPage() {
@@ -104,7 +105,7 @@ export default function GameWiseReportsPage() {
               <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                 Number(value) > 100 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
               }`}>
-                {value}%
+                {String(value)}%
               </span>
             )
           }

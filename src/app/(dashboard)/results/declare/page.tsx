@@ -11,17 +11,17 @@ import { formatDateForInput } from '../../../../../utils/helper'
 export default function DeclareResultPage() {
   const [selectedGame, setSelectedGame] = useState('')
   
-  const handleGameSelect = (gameId) => {
-    setSelectedGame(gameId)
-    const selectedGameData = games.find(game => game?.game_id == gameId)
+  const handleGameSelect = (gameId: unknown) => {
+    setSelectedGame(String(gameId))
+    const selectedGameData = games.find((game: Record<string, unknown>) => (game?.game_id as unknown) == gameId) as unknown as Record<string, unknown>
     console.log('Selected Game ID:', gameId)
     console.log('Selected Game Data:', selectedGameData)
     console.log('All Games:', games)
     if (selectedGameData) {
       setDate(formatDateForInput(selectedGameData?.result_date) || formatDateForInput(new Date()))
-      setOpenResult(selectedGameData?.open_result || '')
-      setCloseResult(selectedGameData?.close_result || '')
-      setWinningNumber(selectedGameData?.winning_number || '')
+      setOpenResult(String(selectedGameData?.open_result) || '')
+      setCloseResult(String(selectedGameData?.close_result) || '')
+      setWinningNumber(String(selectedGameData?.winning_number) || '')
     }
   }
   const [games, setGames] = useState([])
@@ -35,7 +35,7 @@ export default function DeclareResultPage() {
     setLoading(true)
     try {
       const session = getUserSession()
-      const response = await fetch('http://localhost:3000/api/results/today-results', {
+      const response = await fetch('https://saudagar-backend.onrender.com/api/results/today-results', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${session?.token}`,
@@ -67,20 +67,20 @@ export default function DeclareResultPage() {
       const session = getUserSession()
       console.log('Token:', session?.token)
       
-      const headers = { 'Content-Type': 'application/json' }
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
       if (session?.token) {
         headers['Authorization'] = `Bearer ${session?.token}`
       }
       
-      const response = await fetch('http://localhost:3000/api/results/declare', {
+      const response = await fetch('https://saudagar-backend.onrender.com/api/results/declare', {
         method: 'POST',
         headers,
         body: JSON.stringify({
           game_id: parseInt(selectedGame),
           result_date: date,
-          open_result: openResult,
-          close_result: closeResult,
-          winning_number: winningNumber
+          open_result: parseInt(openResult) || 0,
+          close_result: parseInt(closeResult) || 0,
+          winning_number: parseInt(winningNumber) || 0
         })
       })
 
@@ -119,7 +119,7 @@ export default function DeclareResultPage() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Declare Game Result</h2>
-              <p className="text-red-100 text-sm">Enter the winning numbers for today's game</p>
+              <p className="text-red-100 text-sm">Enter the winning numbers for today&apos;s game</p>
             </div>
           </div>
         </div>
@@ -130,9 +130,9 @@ export default function DeclareResultPage() {
             <Dropdown
               value={selectedGame}
               onChange={handleGameSelect}
-              options={games.map(game => ({
-                value: game.game_id,
-                label: game.game_name,
+              options={games.map((game: Record<string, unknown>) => ({
+                value: String(game.game_id),
+                label: String(game.game_name),
                 icon: <SportsEsports />
               }))}
               placeholder={loading ? "Loading games..." : "Choose Game"}
@@ -153,7 +153,7 @@ export default function DeclareResultPage() {
                   }}
                   className="w-20 h-16 text-2xl font-bold text-center border-2 border-green-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 bg-white shadow-lg"
                   placeholder="XXX"
-                  maxLength="3"
+                  maxLength={3}
                   suppressHydrationWarning
                 />
               </div>
@@ -169,7 +169,7 @@ export default function DeclareResultPage() {
                   }}
                   className="w-16 h-16 text-2xl font-bold text-center border-2 border-yellow-300 rounded-xl focus:ring-4 focus:ring-yellow-200 focus:border-yellow-500 bg-white shadow-lg"
                   placeholder="XX"
-                  maxLength="2"
+                  maxLength={2}
                   suppressHydrationWarning
                 />
               </div>
@@ -185,7 +185,7 @@ export default function DeclareResultPage() {
                   }}
                   className="w-20 h-16 text-2xl font-bold text-center border-2 border-green-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 bg-white shadow-lg"
                   placeholder="XXX"
-                  maxLength="3"
+                  maxLength={3}
                   suppressHydrationWarning
                 />
               </div>
@@ -196,7 +196,7 @@ export default function DeclareResultPage() {
             <DateInput
               label="Result Date"
               value={date}
-              onChange={setDate}
+              onChange={(value) => setDate(String(value))}
               disabled={true}
             />
           </div>
