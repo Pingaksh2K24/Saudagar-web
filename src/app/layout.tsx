@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Saudagar",
-  description: "Zignuts - Game Challenge",
+  description: "Saudagar - Jahan Har Number Ka Hai Saudagar",
   icons: {
-    icon: "/images/icon.png",
+    icon: "/favicon.ico",
   },
 };
 
