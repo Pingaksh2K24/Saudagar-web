@@ -34,7 +34,7 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      await fetch('https://saudagar-backend.onrender.com/api/auth/logout', {
+      await fetch('http://localhost:3000/api/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -79,6 +79,9 @@ export default function Sidebar() {
               <div className="ml-6 mt-1 space-y-1">
                 <Link href="/games/list" className={`block px-3 py-2 rounded text-xs ${isActive('/games/list') ? 'bg-red-500' : 'text-gray-400 hover:bg-gray-800'}`}>
                   <List className="w-3 h-3 mr-2 inline" /> All Games List
+                </Link>
+                <Link href="/games/rates" className={`block px-3 py-2 rounded text-xs ${isActive('/games/rates') ? 'bg-red-500' : 'text-gray-400 hover:bg-gray-800'}`}>
+                  <AttachMoney className="w-3 h-3 mr-2 inline" /> Game Rates
                 </Link>
                 <Link href="/games/status" className={`block px-3 py-2 rounded text-xs ${isActive('/games/status') ? 'bg-red-500' : 'text-gray-400 hover:bg-gray-800'}`}>
                   <BarChart className="w-3 h-3 mr-2 inline" /> Game Status

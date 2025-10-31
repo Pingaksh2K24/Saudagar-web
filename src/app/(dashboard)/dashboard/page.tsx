@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const fetchTodayResults = async () => {
     console.log('Starting fetchTodayResults...')
     try {
-      const response = await fetch('https://saudagar-backend.onrender.com/api/results/today-game-results')
+      const response = await fetch('http://localhost:3000/api/results/today-game-results')
       if (response.ok) {
         const data = await response.json()
         console.log('Fetched Today Results:', data.results)
@@ -51,7 +51,7 @@ export default function DashboardPage() {
   const fetchVillageList = async () => {
     console.log('Starting fetchVillageList...')
     try {
-      const response = await fetch('https://saudagar-backend.onrender.com/api/auth/village-list')
+      const response = await fetch('http://localhost:3000/api/auth/village-list')
       if (response.ok) {
         const data = await response.json()
         const formattedVillages = data?.users.map((village: unknown) => ({
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         }
       }
       const session = getUserSession()
-      const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch-admin-bids', {
+      const response = await fetch('http://localhost:3000/api/bids/fetch-admin-bids', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +93,6 @@ export default function DashboardPage() {
         body: JSON.stringify(requestBody)
       })
 
-      console.log('Admin bids response status:', response.status)
       if (response.ok) {
         const resp = await response.json();
         const adminBids = Array.isArray(resp.data.bids) ? resp.data.bids : []
@@ -105,6 +104,47 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Error fetching admin bids:', error)
+    }
+  }
+
+  const getBidsByVillage = async (villageName: string, gameId?: string, page: number = 1) => {
+    console.log('Starting getBidsByVillage for:', villageName, 'gameId:', gameId, 'page:', page)
+    try {
+      const requestBody = {
+        pagination: {
+          page: page,
+          limit: 10
+        },
+        filters: {
+          village: villageName,
+          game_result_id: gameId ? parseInt(gameId) : null,
+          date: new Date().toISOString().split('T')[0],
+          session_type: '',
+          status: ''
+        }
+      }
+      const session = getUserSession()
+      const response = await fetch('http://localhost:3000/api/bids/fetch-admin-bids', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token}`
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      console.log('Village bids response status:', response.status)
+      if (response.ok) {
+        const resp = await response.json();
+        const adminBids = Array.isArray(resp.data.bids) ? resp.data.bids : []
+        console.log('Fetched Bid by Village Namessssssss:', adminBids)
+        setAdminBidsList(adminBids);
+        setpagination(resp.data.pagination || {})
+      } else {
+        console.log('Village bids API failed with status:', response.status)
+      }
+    } catch (error) {
+      console.error('Error fetching village bids:', error)
     }
   }
 
@@ -122,32 +162,64 @@ export default function DashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <DashboardHeader onAddAgent={() => setIsAddUserModalOpen(true)} />
-      
+
 
 
       <div className="grid grid-cols-2 gap-4">
         <Dropdown
           options={todayResults}
           value={selectedGame}
-          onChange={(value) => setSelectedGame(String(value))}
+          onChange={(value) => {
+            setSelectedGame(String(value))
+            if (value) {
+              getBidsByVillage(selectedVillage, String(value))
+            }
+          }}
           placeholder="Select Game"
           className=""
         />
         <Dropdown
           options={villageList}
           value={selectedVillage}
-          onChange={(value) => setSelectedVillage(String(value))}
+          onChange={(value) => {
+            const selectedVillageObj = villageList.find(v => String(v.value) === String(value))
+            if (selectedVillageObj) {
+              setSelectedVillage(selectedVillageObj.label);
+              getBidsByVillage(selectedVillageObj.label, selectedGame)
+            } else {
+              setSelectedVillage('');
+            }
+          }}
           placeholder="Select Village"
           className=""
         />
       </div>
 
+      <div className="flex justify-between items-center mb-4">
+        {/* <h2 className="text-xl font-semibold text-gray-800">Filtered Bids</h2> */}
+        <button
+          onClick={() => {
+            setSelectedGame('')
+            setSelectedVillage('')
+            fetchAdminBids()
+          }}
+          className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium"
+        >
+          Clear Filters
+        </button>
+      </div>
       <FilteredBidsTable
         selectedGame={selectedGame}
         selectedVillage={selectedVillage}
         adminBids={adminBidsList}
         pagination={pagination}
-        onPageChange={(page: unknown) => fetchAdminBids({ page: page as number })}
+        onPageChange={(page: unknown) => {
+          if (selectedVillage || selectedGame) {
+            getBidsByVillage(selectedVillage, selectedGame, page as number)
+          } else {
+            fetchAdminBids({ page: page as number })
+          }
+        }}
       />
 
       {/* <StatsCards data={dashboardData} /> */}

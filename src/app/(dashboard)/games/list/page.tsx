@@ -50,7 +50,7 @@ export default function AllGamesPage() {
   const fetchGames = async () => {
     try {
       setLoading(true)
-      const response = await fetch('https://saudagar-backend.onrender.com/api/games/all', {
+      const response = await fetch('http://localhost:3000/api/games/all', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
@@ -70,7 +70,7 @@ export default function AllGamesPage() {
       try {
 
         const session = getUserSession()
-        const response = await fetch(`https://saudagar-backend.onrender.com/api/games/delete/${gameId}`, {
+        const response = await fetch(`http://localhost:3000/api/games/delete/${gameId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${session?.token}`,
@@ -90,7 +90,7 @@ export default function AllGamesPage() {
 
   const handleEditGame = async (gameId: number) => {
     try {
-      const response = await fetch(`https://saudagar-backend.onrender.com/api/games/${gameId}`, {
+      const response = await fetch(`http://localhost:3000/api/games/${gameId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })

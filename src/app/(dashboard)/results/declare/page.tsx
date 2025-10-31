@@ -10,7 +10,7 @@ import { formatDateForInput } from '../../../../../utils/helper'
 
 export default function DeclareResultPage() {
   const [selectedGame, setSelectedGame] = useState('')
-  
+
   const handleGameSelect = (gameId: unknown) => {
     setSelectedGame(String(gameId))
     const selectedGameData = games.find((game: Record<string, unknown>) => (game?.game_id as unknown) == gameId) as unknown as Record<string, unknown>
@@ -35,7 +35,7 @@ export default function DeclareResultPage() {
     setLoading(true)
     try {
       const session = getUserSession()
-      const response = await fetch('https://saudagar-backend.onrender.com/api/results/today-results', {
+      const response = await fetch('http://localhost:3000/api/results/today-results', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${session?.token}`,
@@ -46,7 +46,16 @@ export default function DeclareResultPage() {
       if (response.ok) {
         const data = await response.json()
         console.log('Games API Response:', data)
-        setGames(data.results || [])
+        let updateGameList = data.results.map((game: Record<string, unknown>) => ({
+          game_id: game.game_id,
+          game_name: game.game_name,
+          result_date: game?.result_date,
+          open_result: game?.open_result === null ? '' : game?.open_result,
+          close_result: game?.close_result === null ? '' : game?.close_result,
+          winning_number: game?.winning_number === null ? '' : game?.winning_number,
+        }))
+        console.log('Formatted Games List:', updateGameList)
+        setGames(updateGameList);
       }
     } catch (error) {
       console.error('Error fetching games:', error)
@@ -66,21 +75,21 @@ export default function DeclareResultPage() {
     try {
       const session = getUserSession()
       console.log('Token:', session?.token)
-      
+
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
       if (session?.token) {
         headers['Authorization'] = `Bearer ${session?.token}`
       }
-      
-      const response = await fetch('https://saudagar-backend.onrender.com/api/results/declare', {
+
+      const response = await fetch('http://localhost:3000/api/results/declare', {
         method: 'POST',
         headers,
         body: JSON.stringify({
           game_id: parseInt(selectedGame),
           result_date: date,
-          open_result: parseInt(openResult) || 0,
-          close_result: parseInt(closeResult) || 0,
-          winning_number: parseInt(winningNumber) || 0
+          open_result: openResult || null,
+          close_result: closeResult|| null,
+          winning_number: winningNumber || null
         })
       })
 

@@ -25,7 +25,7 @@ export default function WalletDetailsPage() {
 
   const fetchWalletData = async () => {
     try {
-      const response = await fetch('https://saudagar-backend.onrender.com/api/users/wallet')
+      const response = await fetch('http://localhost:3000/api/users/wallet')
       if (response.ok) {
         const contentType = response.headers.get('content-type')
         if (contentType && contentType.includes('application/json')) {

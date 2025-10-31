@@ -23,11 +23,7 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage, admin
   const allBidsData = Array.isArray(adminBids) ? adminBids : []
   console.log('Using data:', allBidsData)
   
-  const filteredBids = allBidsData.filter(bid => {
-    const gameMatch = !selectedGame || selectedGame === 'all' || bid.game === selectedGame
-    const villageMatch = !selectedVillage || selectedVillage === 'all' || bid.village === selectedVillage
-    return gameMatch && villageMatch
-  })
+  const filteredBids = allBidsData
 
   const totalRecords = pagination.total || filteredBids.length
   const totalPages = pagination.total_pages || Math.ceil(totalRecords / recordsPerPage)
@@ -99,8 +95,8 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage, admin
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
           Filtered Bids 
-          {selectedGame && selectedGame !== 'all' && ` - ${getGameName(selectedGame)}`}
-          {selectedVillage && selectedVillage !== 'all' && ` - ${getVillageName(selectedVillage)}`}
+          {/* {selectedGame && selectedGame !== 'all' && ` - ${getGameName(selectedGame)}`} */}
+          {/* {selectedVillage && selectedVillage !== 'all' && ` - ${getVillageName(selectedVillage)}`} */}
         </h3>
         <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
           {filteredBids.length} bids found

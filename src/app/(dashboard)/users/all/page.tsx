@@ -49,7 +49,7 @@ export default function AllUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://saudagar-backend.onrender.com/api/auth/getAllUserList');
+      const response = await fetch('http://localhost:3000/api/auth/getAllUserList');
       console.log('Fetch All User List response:', response);
       if (response.ok && response.status === 200) {
         const contentType = response.headers.get('content-type')
@@ -73,7 +73,7 @@ export default function AllUsersPage() {
   const handleDeleteUser = async (userId: number) => {
     try {
       const session = getUserSession()
-      const response = await fetch(`https://saudagar-backend.onrender.com/api/auth/users/${userId}`, {
+      const response = await fetch(`http://localhost:3000/api/auth/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${session?.token}`,

@@ -80,7 +80,7 @@ export default function EditUserModal({ isOpen, onClose, onUserUpdated, user }: 
         address: formData.address
       }
       
-      const response = await fetch(`https://saudagar-backend.onrender.com/api/auth/users/${user.id}`, {
+      const response = await fetch(`http://localhost:3000/api/auth/users/${user.id}`, {
         method: 'PUT',
         mode: 'cors',
         credentials: 'include',

@@ -20,7 +20,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await fetch('https://saudagar-backend.onrender.com/api/auth/logout', { 
+      await fetch('http://localhost:3000/api/auth/logout', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       })

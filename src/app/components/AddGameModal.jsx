@@ -36,7 +36,7 @@ export default function AddGameModal({ isOpen, onClose, onProjectCreated }) {
     console.log('Submitting game with status:', status)
     try {
       const token = getCookie('auth_token')
-      const response = await fetch('https://saudagar-backend.onrender.com/api/games/add', {
+      const response = await fetch('http://localhost:3000/api/games/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

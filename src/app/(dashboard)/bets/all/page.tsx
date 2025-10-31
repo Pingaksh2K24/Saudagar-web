@@ -61,7 +61,7 @@ export default function AllBetsPage() {
       setLoading(true)
       const session = getUserSession()
       const token = localStorage.getItem('token')
-      const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch', {
+      const response = await fetch('http://localhost:3000/api/bids/fetch', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session?.token}`,
@@ -103,7 +103,7 @@ export default function AllBetsPage() {
 
   const nextPage = async () => {
     const token = localStorage.getItem('token')
-    const response = await fetch('https://saudagar-backend.onrender.com/api/bids/fetch', {
+    const response = await fetch('http://localhost:3000/api/bids/fetch', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

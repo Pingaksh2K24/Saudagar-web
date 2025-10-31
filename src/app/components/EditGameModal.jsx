@@ -48,7 +48,7 @@ export default function EditGameModal({ isOpen, onClose, gameId, gameData, onGam
     setLoading(true)
     try {
       const session = getUserSession()
-      const response = await fetch(`https://saudagar-backend.onrender.com/api/games/update/${gameId}`, {
+      const response = await fetch(`http://localhost:3000/api/games/update/${gameId}`, {
         method: 'PUT',
         headers: { 
           'Authorization': `Bearer ${session?.token}`,
