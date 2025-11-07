@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { CreditCard, Search, FilterList, TrendingUp, TrendingDown, AccountBalance } from '@mui/icons-material'
-import DataTable from '../../../components/table/page'
-import { ViewButton } from '../../../components/action/page'
-import Dropdown from '../../../components/dropdown/page'
+import { CreditCard, Search, TrendingUp, TrendingDown, AccountBalance } from '@mui/icons-material'
+import DataTable from '@/components/table/page'
+import { ViewButton } from '@/components/action/page'
+import Dropdown from '@/components/ui/dropdown/page'
 import StatsCard from '../../users/StatsCard'
 
 interface Transaction extends Record<string, unknown> {

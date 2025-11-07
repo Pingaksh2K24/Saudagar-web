@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { TrendingUp, Search, FilterList, Login, Logout, AttachMoney } from '@mui/icons-material'
-import Table from '../../../components/table/page'
+import Table from '@/components/table/page'
 
 interface ActivityLog extends Record<string, unknown> {
   id: number

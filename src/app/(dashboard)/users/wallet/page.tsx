@@ -1,7 +1,7 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AccountBalanceWallet, Search, TrendingUp, TrendingDown } from '@mui/icons-material'
-import Table from '../../../components/table/page'
+import Table from '@/components/table/page'
 
 interface WalletData extends Record<string, unknown> {
   user_id: number
@@ -19,30 +19,6 @@ export default function WalletDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
-  useEffect(() => {
-    fetchWalletData()
-  }, [])
-
-  const fetchWalletData = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/users/wallet')
-      if (response.ok) {
-        const contentType = response.headers.get('content-type')
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json()
-          setWalletData(Array.isArray(data) ? data : data.wallets || [])
-        } else {
-          setWalletData([])
-        }
-      } else {
-        setWalletData([])
-      }
-    } catch (error) {
-      setWalletData([])
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const filteredData = walletData.filter(wallet =>
     wallet.user_name.toLowerCase().includes(searchTerm.toLowerCase())

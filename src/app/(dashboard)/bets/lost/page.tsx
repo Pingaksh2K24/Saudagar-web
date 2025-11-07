@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Cancel, Search } from '@mui/icons-material'
-import DataTable from '../../../components/table/page'
-import { ViewButton } from '../../../components/action/page'
+import DataTable from '@/components/table/page'
+import { ViewButton } from '@/components/action/page'
 import StatsCard from '../../users/StatsCard'
 
 interface LostBet extends Record<string, unknown> {

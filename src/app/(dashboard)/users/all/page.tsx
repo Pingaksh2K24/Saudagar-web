@@ -1,97 +1,114 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Group, People, PersonAdd, SupervisorAccount, Search } from '@mui/icons-material'
-import DataTable from '../../../components/table/page'
-import { EditButton, DeleteButton } from '../../../components/action/page'
-import StatsCard from '../StatsCard'
-import Dropdown from '../../../components/dropdown/page'
-import AddUserModal from '../AddUserModal'
-import EditUserModal from '../EditUserModal'
-import { getUserSession } from '@/utils/cookies'
-import Button from '../../../components/button/page'
-// 
+'use client';
+import { useState, useEffect } from 'react';
+import {
+  Group,
+  People,
+  PersonAdd,
+  SupervisorAccount,
+  Search,
+  DateRange,
+} from '@mui/icons-material';
+import DataTable from '@/components/table/page';
+import { EditButton, DeleteButton } from '@/components/action/page';
+import StatsCard from '../StatsCard';
+import Dropdown from '@/components/ui/dropdown/page';
+import AddUserModal from '../AddUserModal';
+import EditUserModal from '../EditUserModal';
+import Button from '@/components/ui/button/page';
+import { showSuccess, showError } from '@/utils/notification';
+import ConfirmDialog from '@/components/confirm-dialog/page';
+// API Services
+import AuthenticationServices from '@/lib/api/axiosServices/apiServices/AuthenticationServices';
 
 interface User extends Record<string, unknown> {
-  id: number
-  full_name: string
-  email: string
-  mobile_number: string
-  role: string
-  status: string
-  village: string
-  address: string
-  created_at: string
-  [key: string]: unknown
+  id: number;
+  full_name: string;
+  email: string;
+  mobile_number: string;
+  role: string;
+  status: string;
+  village: string;
+  address: string;
+  created_at: string;
+  [key: string]: unknown;
 }
 
 const roleOptions = [
   { value: 'admin', label: 'Admin' },
   { value: 'moderator', label: 'Moderator' },
-  { value: 'agent', label: 'Agent' }
-]
+  { value: 'agent', label: 'Agent' },
+];
 
 const statusOptions = [
   { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' }
-]
+  { value: 'inactive', label: 'Inactive' },
+];
 
 export default function AllUsersPage() {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
-  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
-  const [searchTerm, setSearchTerm] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>(
+    {}
+  );
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
+
+  const authenticationServices = new AuthenticationServices();
+
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    getAllUsersList();
+  }, []);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/auth/getAllUserList');
-      console.log('Fetch All User List response:', response);
-      if (response.ok && response.status === 200) {
-        const contentType = response.headers.get('content-type')
-        if (contentType && contentType.includes('application/json')) {
-          const data = await response.json()
-          console.log('Fetched Users:', data.users);
-          setUsers(Array.isArray(data.users) ? data.users : [])
+  //Fetch all users list
+  const getAllUsersList = () => {
+    setLoading(true);
+    authenticationServices.getAllUsersList().then((response) => {
+      if (
+        response &&
+        response.statusCode === 200 &&
+        response.success === true
+      ) {
+        setUsers(
+          Array.isArray(response?.data?.users) ? response?.data?.users : []
+        );
+      } else {
+        showError(response.message || 'Failed to fetch game wise reports');
+        setUsers([]);
+      }
+      setLoading(false);
+    });
+  };
+  // Handle delete game method
+  const handleDeleteUser = (userId: number) => {
+    setUserToDelete(userId);
+    setShowDeleteConfirm(true);
+  };
+  // confirm delete game
+  const confirmDeleteUser = () => {
+    if (userToDelete) {
+      setLoading(true);
+      authenticationServices.deleteUserById(userToDelete).then((response) => {
+        console.log('Delete game response:', response);
+        if (
+          response &&
+          response.statusCode === 200 &&
+          response.success === true
+        ) {
+          showSuccess(response.message || 'Usser deleted successfully');
+          getAllUsersList();
         } else {
-          setUsers([])
+          showError(response.message || 'Failed to delete user');
         }
-      } else {
-        setUsers([])
-      }
-    } catch {
-      setUsers([])
-    } finally {
-      setLoading(false)
+        setLoading(false);
+        setShowDeleteConfirm(false);
+        setUserToDelete(null);
+      });
     }
-  }
-
-  const handleDeleteUser = async (userId: number) => {
-    try {
-      const session = getUserSession()
-      const response = await fetch(`http://localhost:3000/api/auth/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${session?.token}`,
-          'X-User-ID': session?.user?.id
-        }
-      })
-      
-      if (response.ok) {
-        console.log('User deleted successfully!')
-        fetchUsers()
-      } else {
-        console.error('Failed to delete user')
-      }
-    } catch (error) {
-      console.error('Error deleting user:', error)
-      console.error('Error deleting user')
-    }
-  }
+  };
 
   return (
     <div className="p-6">
@@ -118,19 +135,19 @@ export default function AllUsersPage() {
         />
         <StatsCard
           title="Active Users"
-          value={users.filter(u => u.status === 'Active').length}
+          value={users.filter((u) => u.status === 'Active').length}
           icon={<PersonAdd className="w-6 h-6" />}
           gradient="from-green-500 to-green-600"
         />
         <StatsCard
           title="Admins"
-          value={users.filter(u => u.role === 'admin').length}
+          value={users.filter((u) => u.role === 'admin').length}
           icon={<SupervisorAccount className="w-6 h-6" />}
           gradient="from-purple-500 to-purple-600"
         />
         <StatsCard
           title="Moderators"
-          value={users.filter(u => u.role === 'moderator').length}
+          value={users.filter((u) => u.role === 'moderator').length}
           icon={<Group className="w-6 h-6" />}
           gradient="from-indigo-500 to-indigo-600"
         />
@@ -150,31 +167,44 @@ export default function AllUsersPage() {
           />
         </div>
         <div className="flex items-center space-x-4">
+          <button
+            onClick={() => setActiveFilters({})}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm font-medium"
+          >
+            Clear Filter
+          </button>
           <Dropdown
             value={activeFilters.role || ''}
-            onChange={(value) => setActiveFilters(prev => ({ ...prev, role: String(value) }))}
+            onChange={(value) =>
+              setActiveFilters((prev) => ({ ...prev, role: String(value) }))
+            }
             options={roleOptions}
             placeholder="All Roles"
-            className="min-w-32"
+            className="min-w-48"
           />
           <Dropdown
             value={activeFilters.status || ''}
-            onChange={(value) => setActiveFilters(prev => ({ ...prev, status: String(value) }))}
+            onChange={(value) =>
+              setActiveFilters((prev) => ({ ...prev, status: String(value) }))
+            }
             options={statusOptions}
             placeholder="All Status"
-            className="min-w-32"
+            className="min-w-48"
           />
         </div>
       </div>
 
       <DataTable<User>
-        data={users.filter(user => {
-          const matchesSearch = searchTerm === '' || 
+        data={users.filter((user) => {
+          const matchesSearch =
+            searchTerm === '' ||
             user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-          const matchesRole = !activeFilters.role || user.role === activeFilters.role
-          const matchesStatus = !activeFilters.status || user.status === activeFilters.status
-          return matchesSearch && matchesRole && matchesStatus
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesRole =
+            !activeFilters.role || user.role === activeFilters.role;
+          const matchesStatus =
+            !activeFilters.status || user.status === activeFilters.status;
+          return matchesSearch && matchesRole && matchesStatus;
         })}
         columns={[
           {
@@ -184,14 +214,18 @@ export default function AllUsersPage() {
             render: (value, user) => (
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium">{String(value).charAt(0)}</span>
+                  <span className="text-white font-medium">
+                    {String(value).charAt(0)}
+                  </span>
                 </div>
                 <div className="ml-4">
-                  <div className="text-sm font-medium text-gray-900">{String(value)}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {String(value)}
+                  </div>
                   <div className="text-sm text-gray-500">ID: {user.id}</div>
                 </div>
               </div>
-            )
+            ),
           },
           {
             key: 'email',
@@ -199,79 +233,106 @@ export default function AllUsersPage() {
             render: (value, user) => (
               <div>
                 <div className="text-sm text-gray-900">{String(value)}</div>
-                <div className="text-sm text-gray-500">{user.mobile_number}</div>
+                <div className="text-sm text-gray-500">
+                  {user.mobile_number}
+                </div>
               </div>
-            )
+            ),
           },
           {
             key: 'role',
             label: 'Role',
             render: (value) => {
-              const role = String(value)
+              const role = String(value);
               return (
-                <span className={`px-2 py-1 text-xs capitalize font-semibold rounded-full ${
-                  role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                  role === 'moderator' ? 'bg-blue-100 text-blue-800' :
-                  'bg-green-100 text-green-800'
-                }`}>
+                <span
+                  className={`px-2 py-1 text-xs capitalize font-semibold rounded-full ${
+                    role === 'admin'
+                      ? 'bg-purple-100 text-purple-800'
+                      : role === 'moderator'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-green-100 text-green-800'
+                  }`}
+                >
                   {role}
                 </span>
-              )
-            }
+              );
+            },
           },
           {
             key: 'status',
             label: 'Status',
             render: (value) => {
-              const status = String(value)
+              const status = String(value);
               return (
-                <span className={`px-2 py-1 text-xs capitalize font-semibold rounded-full ${
-                  status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`px-2 py-1 text-xs capitalize font-semibold rounded-full ${
+                    status === 'active'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
                   {status}
                 </span>
-              )
-            }
+              );
+            },
           },
           {
             key: 'created_at',
             label: 'Joined',
             render: (value) => (
-              <span className="text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500">
+                <DateRange className="w-4 h-4 mr-2" />
                 {new Date(String(value)).toLocaleDateString()}
-              </span>
-            )
-          }
+              </div>
+            ),
+          },
         ]}
         emptyMessage="No users found"
         loading={loading}
         actions={(user) => (
           <div className="flex items-center justify-end space-x-4">
-            <EditButton size="small" onClick={() => {
-              setSelectedUser(user)
-              setIsEditModalOpen(true)
-            }} />
-            <DeleteButton size="small" onClick={() => {
-              if (confirm('Are you sure you want to delete this user?')) {
-                handleDeleteUser(user.id)
-              }
-            }} />
+            <EditButton
+              size="small"
+              onClick={() => {
+                setSelectedUser(user);
+                setIsEditModalOpen(true);
+              }}
+            />
+            <DeleteButton
+              size="small"
+              onClick={() => handleDeleteUser(user.id)}
+            />
           </div>
         )}
       />
-      
+
       <AddUserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onUserAdded={fetchUsers}
+        onUserAdded={getAllUsersList}
       />
-      
+
       <EditUserModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onUserUpdated={fetchUsers}
+        onUserUpdated={getAllUsersList}
         user={selectedUser as User | null}
       />
+
+      {/* Confirm Dialog Box on Delete Game */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        onConfirm={confirmDeleteUser}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setUserToDelete(null);
+        }}
+        confirmText="Delete"
+        type="danger"
+      />
     </div>
-  )
+  );
 }

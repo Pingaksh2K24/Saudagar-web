@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Security, Save, Lock, Shield } from '@mui/icons-material'
-import Button from '../../../components/button/page'
+import Button from '@/components/ui/button/page'
 
 export default function SecurityPage() {
   const [currentPassword, setCurrentPassword] = useState('')

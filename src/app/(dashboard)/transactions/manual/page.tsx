@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { Build, Add, Remove, Save } from '@mui/icons-material'
-import Button from '../../../components/button/page'
-import Dropdown from '../../../components/dropdown/page'
+import { Build, Save } from '@mui/icons-material'
+import Button from '@/components/ui/button/page'
+import Dropdown from '@/components/ui/dropdown/page'
 
 const userOptions = [
   { value: 'user1', label: 'John Doe' },

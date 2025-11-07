@@ -1,10 +1,10 @@
 'use client'
 import { useState } from 'react'
-import { Search, FilterList, AttachMoney } from '@mui/icons-material'
-import DataTable from '../../../components/table/page'
-import { ViewButton } from '../../../components/action/page'
-import Dropdown from '../../../components/dropdown/page'
-import Button from '../../../components/button/page'
+import { Search, FilterList } from '@mui/icons-material'
+import DataTable from '@/components/table/page'
+import { ViewButton } from '@/components/action/page'
+import Dropdown from '@/components/ui/dropdown/page'
+import Button from '@/components/ui/button/page'
 
 interface SearchResult extends Record<string, unknown> {
   id: number

@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Announcement, Add, Edit, Delete, Visibility } from '@mui/icons-material'
-import Button from '../../../components/button/page'
-import DataTable from '../../../components/table/page'
-import { ViewButton, EditButton, DeleteButton } from '../../../components/action/page'
+import { Announcement, Add } from '@mui/icons-material'
+import Button from '@/components/ui/button/page'
+import DataTable from '@/components/table/page'
+import { ViewButton, EditButton, DeleteButton } from '@/components/action/page'
 
 interface AnnouncementData extends Record<string, unknown> {
   id: number

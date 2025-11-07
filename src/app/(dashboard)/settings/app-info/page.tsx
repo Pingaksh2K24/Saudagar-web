@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { PhoneAndroid, Save, Info, Update } from '@mui/icons-material'
-import Button from '../../../components/button/page'
+import Button from '@/components/ui/button/page'
 
 export default function AppInfoPage() {
   const [appName, setAppName] = useState('Saudagar')
