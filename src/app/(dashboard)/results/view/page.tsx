@@ -156,7 +156,7 @@ export default function ViewResultsPage() {
           {
             key: 'result_date',
             label: 'Date',
-            render: (value) => (moment(value).format('DD/MM/YYYY'))
+            render: (value) => (moment(String(value)).format('DD/MM/YYYY'))
           },
           {
             key: 'status',

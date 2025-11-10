@@ -40,7 +40,8 @@ export default function ViewReceiptModal({
   onClose,
   receipt,
 }: ViewReceiptModalProps) {
-  const [receiptDetails, setReceiptDetails] = useState<ReceiptDetailsResponse | null>(null);
+  const [receiptDetails, setReceiptDetails] =
+    useState<ReceiptDetailsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const dashboardServices = new DashboardServices();
 
@@ -53,16 +54,23 @@ export default function ViewReceiptModal({
   const fetchReceiptDetails = async () => {
     if (!receipt) return;
     setLoading(true);
-    dashboardServices.getReceiptDetails(receipt.id).then((response: unknown) => {
-      console.log('Receipt details response:', response);
-      const apiResponse = response as { statusCode?: number; success?: boolean; data?: ReceiptDetailsResponse; message?: string };
-      if (apiResponse?.statusCode === 200 && apiResponse?.success === true) {
-        setReceiptDetails(apiResponse?.data || null);
-      } else {
-        showError(apiResponse?.message || 'Failed to fetch receipt details');
-      }
-      setLoading(false);
-    });
+    dashboardServices
+      .getReceiptDetails(receipt.id)
+      .then((response: unknown) => {
+        console.log('Receipt details response:', response);
+        const apiResponse = response as {
+          statusCode?: number;
+          success?: boolean;
+          data?: ReceiptDetailsResponse;
+          message?: string;
+        };
+        if (apiResponse?.statusCode === 200 && apiResponse?.success === true) {
+          setReceiptDetails(apiResponse?.data || null);
+        } else {
+          showError(apiResponse?.message || 'Failed to fetch receipt details');
+        }
+        setLoading(false);
+      });
   };
 
   const handlePrint = () => {
@@ -78,11 +86,8 @@ export default function ViewReceiptModal({
 
   if (!isOpen || !receipt) return null;
 
-  const bidDetails: BidDetail[] = receiptDetails?.bid_details || receiptDetails?.bids || [
-    { bid_type_name: 'Single Digit', bid_number: '3', amount: 12 },
-    { bid_type_name: 'Single Digit', bid_number: '4', amount: 20 },
-    { bid_type_name: 'Single Digit', bid_number: '5', amount: 10 },
-  ];
+  const bidDetails: BidDetail[] =
+    receiptDetails?.bid_details || receiptDetails?.bids || [];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -91,7 +96,11 @@ export default function ViewReceiptModal({
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
             <div className="w-20 h-20 bg-blue-900 rounded-full flex items-center justify-center mr-3">
-              <img src="/images/icon.png" alt="Saudagar" className="w-16 h-16" />
+              <img
+                src="/images/icon.png"
+                alt="Saudagar"
+                className="w-16 h-16"
+              />
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">Receipt</h2>
@@ -137,16 +146,27 @@ export default function ViewReceiptModal({
             <table className="bid-table w-full border-collapse border">
               <thead>
                 <tr className="bg-gray-50">
-                  <th className="border p-2 text-xs font-medium text-gray-600">No.</th>
-                  <th className="border p-2 text-xs font-medium text-gray-600">Type</th>
-                  <th className="border p-2 text-xs font-medium text-gray-600">Number</th>
-                  <th className="border p-2 text-xs font-medium text-gray-600">Amount</th>
+                  <th className="border p-2 text-xs font-medium text-gray-600">
+                    No.
+                  </th>
+                  <th className="border p-2 text-xs font-medium text-gray-600">
+                    Type
+                  </th>
+                  <th className="border p-2 text-xs font-medium text-gray-600">
+                    Number
+                  </th>
+                  <th className="border p-2 text-xs font-medium text-gray-600">
+                    Amount
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={4} className="border p-4 text-center text-sm text-gray-500">
+                    <td
+                      colSpan={4}
+                      className="border p-4 text-center text-sm text-gray-500"
+                    >
                       Loading bid details...
                     </td>
                   </tr>
@@ -154,14 +174,23 @@ export default function ViewReceiptModal({
                   bidDetails.map((bid, index) => (
                     <tr key={index}>
                       <td className="border p-2 text-xs">#{index + 1}</td>
-                      <td className="border p-2 text-xs">{bid.bid_type_name || 'Single Digit'}</td>
-                      <td className="border p-2 text-xs font-medium">{bid.bid_number}</td>
-                      <td className="border p-2 text-xs text-green-600 font-medium">₹{bid.amount}</td>
+                      <td className="border p-2 text-xs">
+                        {bid.bid_type_name || 'Single Digit'}
+                      </td>
+                      <td className="border p-2 text-xs font-medium">
+                        {bid.bid_number}
+                      </td>
+                      <td className="border p-2 text-xs text-green-600 font-medium">
+                        ₹{bid.amount}
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="border p-4 text-center text-sm text-gray-500">
+                    <td
+                      colSpan={4}
+                      className="border p-4 text-center text-sm text-gray-500"
+                    >
                       No bid details found
                     </td>
                   </tr>
@@ -175,7 +204,7 @@ export default function ViewReceiptModal({
             <div className="flex justify-between items-center">
               <span className="font-semibold">Total Bid Amount:</span>
               <span className="text-lg font-bold text-green-600">
-                ₹{Number(receipt.total_amount).toLocaleString()}
+                ₹{bidDetails.reduce((sum, bid) => sum + Number(bid.amount), 0).toLocaleString()}
               </span>
             </div>
           </div>

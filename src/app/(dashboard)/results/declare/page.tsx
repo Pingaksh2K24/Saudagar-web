@@ -4,7 +4,6 @@ import { DateRange, Save, SportsEsports } from '@mui/icons-material';
 import Button from '@/components/ui/button/page';
 import Dropdown from '@/components/ui/dropdown/page';
 import DateInput from '@/components/date-input/page';
-import { getUserSession } from '@/utils/cookies';
 import { formatDateForInput } from '../../../../utils/helper';
 import { showSuccess, showError } from '@/utils/notification';
 // API Services
@@ -39,14 +38,10 @@ export default function DeclareResultPage() {
   const [date, setDate] = useState('');
   const dashboardServices = new DashboardServices();
 
-  useEffect(() => {
-    getTodaysResult();
-  }, []);
-
   // Get todays results
   const getTodaysResult = () => {
     setLoading(true);
-    dashboardServices.getTodaysResults().then((response) => {
+    dashboardServices.getTodaysResults().then((response: any) => {
       console.log('Fetched game rates response:', response);
       if (
         response &&
@@ -72,7 +67,12 @@ export default function DeclareResultPage() {
       setLoading(false);
     });
   };
-// Handle declare result
+
+  useEffect(() => {
+    getTodaysResult();
+  }, []);
+
+  // Handle declare result
   const handleDeclareResult = () => {
     setLoading(true);
     const request = {
@@ -82,7 +82,7 @@ export default function DeclareResultPage() {
       close_result: closeResult || null,
       winning_number: winningNumber || null,
     };
-    dashboardServices.declareResults(request).then((response) => {
+    dashboardServices.declareResults(request).then((response: any) => {
       if (
         response &&
         response.statusCode === 200 &&

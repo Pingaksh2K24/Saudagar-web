@@ -29,8 +29,6 @@ export const setUserSession = (token, userDetails) => {
 export const getUserSession = () => {
   const token = getCookie('auth_token')
   const userDetails = getCookie('user_details')
-  console.log('User Details from Cookie:', userDetails);
-  console.log('Token from Cookie:', token);
   if (token && userDetails) {
     try {
       return {

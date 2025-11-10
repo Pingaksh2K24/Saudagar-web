@@ -128,7 +128,7 @@ export default function DailyReportsPage() {
           {
             key: 'date',
             label: 'Date',
-            render: (value) => moment(value).format('DD/MM/YYYY'),
+            render: (value) => moment(String(value)).format('DD/MM/YYYY'),
           },
           { key: 'total_bids', label: 'Total Bets' },
           {

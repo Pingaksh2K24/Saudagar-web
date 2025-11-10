@@ -201,7 +201,7 @@ export default function AllBetsPage() {
             onChange={(value) => {
               setActiveFilters((prev) => ({
                 ...prev,
-                bet_type: Number(value),
+                bet_type: String(value),
               }));
               setCurrentPage(1);
             }}
@@ -316,7 +316,7 @@ export default function AllBetsPage() {
             render: (value) => (
               <span className="text-sm text-gray-500">
                 <DateRange className="w-4 h-4 mr-2" />
-                {moment(value).tz('Asia/Kolkata').format('DD/MM/YYYY')}
+                {moment(String(value)).tz('Asia/Kolkata').format('DD/MM/YYYY')}
               </span>
             ),
           },

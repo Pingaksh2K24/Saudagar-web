@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SVGIcons } from '../../../utils/svgConstants';
 import { showSuccess, showError } from '../../../utils/notification';
@@ -10,7 +10,8 @@ import PasswordInput from '../../passwordinput/page';
 import { isValidForm } from '@/utils/validation/CommonValidator';
 import { LoginValidationRules } from '../../../utils/validation/AllValidationRules';
 import AuthenticationServices from '../../../lib/api/axiosServices/apiServices/AuthenticationServices';
-import {setAuthProps} from '../../../utils/AuthenticationLibrary';
+import { setAuthProps } from '../../../utils/AuthenticationLibrary';
+import { platform } from 'os';
 
 interface AuthPageProps {
   type: 'login' | 'register';
@@ -24,6 +25,7 @@ export default function AuthPage({ type }: AuthPageProps) {
     name: '',
     mobile: '',
     role: 'user',
+    platform: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -31,12 +33,20 @@ export default function AuthPage({ type }: AuthPageProps) {
     isValid: true,
     error: {},
   });
-
   const isLogin = type === 'login';
-
   const router = useRouter();
-
   const authServices = new AuthenticationServices();
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/android/i.test(userAgent)) {
+      setFormData({ ...formData, platform: 'android' });
+    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      setFormData({ ...formData, platform: 'iod' });
+    } else {
+      setFormData({ ...formData, platform: 'web' });
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +57,7 @@ export default function AuthPage({ type }: AuthPageProps) {
       const request = {
         email: formData.email,
         password: formData.password,
+        platform: formData.platform,
       };
 
       const response = await authServices.adminLogin(request);
@@ -62,8 +73,15 @@ export default function AuthPage({ type }: AuthPageProps) {
         }
         showSuccess('Login successful!');
         router.push('/dashboard');
-      } else if(response && response.statusCode === 401 && response.success === false) {
-        showError(response?.message || 'Unauthorized access. Please check your credentials.');
+      } else if (
+        response &&
+        response.statusCode === 401 &&
+        response.success === false
+      ) {
+        showError(
+          response?.message ||
+            'Unauthorized access. Please check your credentials.'
+        );
       } else {
         showError(response?.message || 'Login failed. Please try again.');
       }

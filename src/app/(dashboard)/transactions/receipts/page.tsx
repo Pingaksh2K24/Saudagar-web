@@ -128,7 +128,7 @@ export default function AllReceiptsPage() {
         />
         <StatsCard
           title="Total Amount"
-          value={`₹${receipts.reduce((sum, r) => sum + r.total_amount, 0).toLocaleString()}`}
+          value={`₹${receipts.reduce((sum, r) => sum + Number(r.total_amount || 0), 0)}`}
           icon={<AttachMoney className="w-6 h-6" />}
           gradient="from-purple-500 to-purple-600"
         />
@@ -212,7 +212,6 @@ export default function AllReceiptsPage() {
         loading={loading}
         pagination={pagination}
         onPageChange={(page) => {
-          setCurrentPage(page);
           fetchReceipts(page);
         }}
         actions={(receipt) => (
