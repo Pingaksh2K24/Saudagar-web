@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Close, PersonAdd } from '@mui/icons-material';
 import Button from '../../../components/ui/button/index';
 import Dropdown from '../../../components/ui/dropdown/index';
-import { getUserSession } from '../../../utils/cookies';
 import { getAuthProps } from '@/utils/AuthenticationLibrary';
 import { showSuccess, showError } from '../../../utils/notification';
 // API Services

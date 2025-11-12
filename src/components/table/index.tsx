@@ -176,14 +176,15 @@ export default function DataTable<T extends Record<string, unknown>>({
     <div>
       {/* Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-900">
             <tr>
               {(columns || []).map((column) => (
                 <th
                   key={column.key}
                   className={`px-6 py-3 text-left text-sm font-medium text-white tracking-wider ${
-                    column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
+                    column.sortable ? 'cursor-pointer hover:bg-red-500' : ''
                   }`}
                   onClick={() => column.sortable && handleSort(column.key)}
                 >
@@ -220,7 +221,8 @@ export default function DataTable<T extends Record<string, unknown>>({
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
         {paginatedData.length === 0 && (
           <div className="text-center py-8 text-gray-500">{emptyMessage}</div>
         )}

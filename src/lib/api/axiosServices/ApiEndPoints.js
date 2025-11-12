@@ -26,6 +26,7 @@ export const GetAllBids = 'bids/fetch';
 export const GetWeeklyReport ='bids/daily-profit-loss';
 export const GetGameWiseReport= 'bids/game-wise-earning?date=${0}';
 export const GetAgentWiseReport ='bids/agent-performance';
+export const GetAgentList = 'bids/agent-list';
 
 // Games services
 export const FetchGamesList = 'games/all';

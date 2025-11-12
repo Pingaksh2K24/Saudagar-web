@@ -34,15 +34,21 @@ export default function GameRatesPage() {
   const fetchGameList = () => {
     setLoading(true);
     dashboardServices.fetchGameList().then((response: any) => {
+      console.log('Fetched games response:', response);
       if (
         response &&
         response.statusCode === 200 &&
         response.success === true
       ) {
-        const filteredGames = response?.data.games.map((game) => ({
-          id: game.id,
-          name: game.game_name,
-        }));
+        const filteredGames = response?.data.games
+          .filter((game) => {
+            return game.status === 'active';
+          })
+          .map((game) => ({
+            id: game.id,
+            name: game.game_name,
+          }));
+
         console.log('Fetched games:', filteredGames);
         setGamesList(Array.isArray(filteredGames) ? filteredGames : []);
       } else {
@@ -74,7 +80,6 @@ export default function GameRatesPage() {
       setLoading(false);
     });
   };
-
   const getStatusBadge = (status: string) => {
     return (
       <span

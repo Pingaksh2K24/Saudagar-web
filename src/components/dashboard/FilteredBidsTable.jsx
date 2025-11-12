@@ -6,6 +6,7 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage, admin
   const [selectedBid, setSelectedBid] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [pageInput, setPageInput] = useState('')
   const recordsPerPage = 10
   
   const handleViewBid = (bid) => {
@@ -52,6 +53,71 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage, admin
         onPageChange(newPage)
       }
     }
+  }
+
+  const handlePageInput = (e) => {
+    if (e.key === 'Enter') {
+      const page = parseInt(pageInput)
+      if (page >= 1 && page <= totalPages) {
+        handlePageChange(page)
+        setPageInput('')
+      }
+    }
+  }
+
+  const renderPaginationButtons = () => {
+    if (totalPages <= 10) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+        <button
+          key={page}
+          onClick={() => handlePageChange(page)}
+          className={`px-3 py-1 text-sm rounded ${
+            currentPage === page 
+              ? 'bg-blue-600 text-white' 
+              : 'text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          {page}
+        </button>
+      ))
+    }
+
+    return (
+      <>
+        <button
+          onClick={() => handlePageChange(1)}
+          className={`px-3 py-1 text-sm rounded ${
+            1 === currentPage
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          1
+        </button>
+        
+        <input
+          type="number"
+          value={pageInput}
+          onChange={(e) => setPageInput(e.target.value)}
+          onKeyPress={handlePageInput}
+          placeholder={`${currentPage}`}
+          className="px-2 py-1 text-sm border border-gray-300 rounded text-center w-16 focus:outline-none focus:ring-1 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          min="1"
+          max={totalPages}
+        />
+        
+        <button
+          onClick={() => handlePageChange(totalPages)}
+          className={`px-3 py-1 text-sm rounded ${
+            totalPages === currentPage
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          {totalPages}
+        </button>
+      </>
+    )
   }
 
   const getStatusColor = (status) => {
@@ -181,19 +247,7 @@ export default function FilteredBidsTable({ selectedGame, selectedVillage, admin
             >
               Previous
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 text-sm rounded ${
-                  currentPage === page 
-                    ? 'bg-blue-600 text-white' 
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+            {renderPaginationButtons()}
             <button 
               onClick={handleNext}
               disabled={currentPage === totalPages}

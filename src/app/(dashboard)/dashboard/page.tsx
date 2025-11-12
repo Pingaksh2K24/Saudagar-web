@@ -6,8 +6,6 @@ import Dropdown from '@/components/ui/dropdown/index';
 import FilteredBidsTable from '../../../components/dashboard/FilteredBidsTable';
 import AtRiskTable from '../../../components/dashboard/AtRiskTable';
 import { showError } from '@/utils/notification';
-import { getAuthProps } from '@/utils/AuthenticationLibrary';
-import { getUserSession } from '@/utils/cookies';
 // API Services
 import DashboardServices from '@/lib/api/axiosServices/apiServices/DashboardServices';
 

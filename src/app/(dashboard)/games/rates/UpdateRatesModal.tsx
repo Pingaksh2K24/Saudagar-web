@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Close, Save } from '@mui/icons-material';
-import { getUserSession } from '@/utils/cookies';
 import Input from '@/components/ui/input/index';
 import { showSuccess, showError } from '@/utils/notification';
 
@@ -38,7 +37,6 @@ export default function UpdateRatesModal({
 }: UpdateRatesModalProps) {
   const [rates, setRates] = useState<GameRate[]>([]);
   const [loading, setLoading] = useState(false);
-
   const dashboardServices = new DashboardServices();
 
   useEffect(() => {

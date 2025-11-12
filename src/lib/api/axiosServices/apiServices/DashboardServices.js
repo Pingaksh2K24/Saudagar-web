@@ -21,6 +21,7 @@ import {
   GetAllResults,
   DeclareResults,
   GetBidTypes,
+  GetAgentList,
   GetAllBids,
   GetWeeklyReport,
   GetGameWiseReport,
@@ -88,6 +89,10 @@ export default class DashboardServices {
 
   async getBidTypes(request) {
     return axiosGetAuthorize(GetBidTypes, request);
+  }
+
+  async getAgentList(request) {
+    return axiosGetAuthorize(GetAgentList, request);
   }
 
   async getAllBids(request) {

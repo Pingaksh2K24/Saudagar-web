@@ -1,6 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { AttachMoney, DateRange } from '@mui/icons-material';
+import {
+  AttachMoney,
+  DateRange,
+  SportsEsports,
+  EmojiEvents,
+  Cancel,
+  Pending,
+} from '@mui/icons-material';
 import DataTable from '@/components/table/index';
 import { ViewButton } from '@/components/action/index';
 import StatsCard from '../../users/StatsCard';
@@ -66,7 +73,15 @@ export default function AllBetsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBet, setSelectedBet] = useState<Bet | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [betTypeOptions, setBetTypeOptions] = useState<{value: number; label: string}[]>([]);
+  const [betTypeOptions, setBetTypeOptions] = useState<
+    { value: number; label: string }[]
+  >([]);
+  const [gameOptions, setGameOptions] = useState<
+    { value: number; label: string }[]
+  >([]);
+  const [agentOptions, setAgentOptions] = useState<
+    { value: number; label: string }[]
+  >([]);
   const [paginationInfo, setPaginationInfo] = useState({
     current_page: 1,
     has_next: false,
@@ -82,6 +97,8 @@ export default function AllBetsPage() {
 
   useEffect(() => {
     getBidTypes();
+    getGames();
+    getAgents();
   }, [currentPage, activeFilters]);
 
   //Get bid types
@@ -106,6 +123,39 @@ export default function AllBetsPage() {
       }
     });
   };
+
+  //Get games
+  const getGames = () => {
+    dashboardServices.fetchGameList().then((response: any) => {
+      if (response?.statusCode === 200 && response?.success === true) {
+        const formattedGames = response?.data?.games
+          ?.filter((game) => {
+            return game.status === 'active';
+          })
+          .map((game) => ({
+            value: game.id,
+            label: game.game_name,
+          })) || [];
+        setGameOptions(formattedGames);
+      }
+    });
+  };
+
+  //Get agents
+  const getAgents = () => {
+    dashboardServices.getAgentList().then((response: any) => {
+      if (response?.statusCode === 200 && response?.success === true) {
+        const formattedAgents =
+          response?.data?.agents?.map((user: any) => ({
+            value: user.id,
+            label: user.full_name,
+          })) || [];
+          console.log("Fetch Agent List :", formattedAgents);
+        setAgentOptions(formattedAgents);
+      }
+    });
+  };
+
   // Get admin bids list
   const getAllBids = () => {
     const request = {
@@ -115,11 +165,11 @@ export default function AllBetsPage() {
       },
       filters: {
         date: null,
-        game_id: null,
+        game_id: activeFilters.game_id || null,
         session_type: null,
         status: activeFilters.status || null,
         bid_type: activeFilters.bet_type || null,
-        user_id: undefined,
+        user_id: activeFilters.agent_id || null,
       },
     };
     setLoading(true);
@@ -161,26 +211,26 @@ export default function AllBetsPage() {
         <StatsCard
           title="Total Bids"
           value={paginationInfo.total}
-          icon={<AttachMoney className="w-6 h-6" />}
+          icon={<SportsEsports className="w-6 h-6" />}
           gradient="from-blue-500 to-blue-600"
+        />
+        <StatsCard
+          title="Submitted Bids"
+          value={paginationInfo.total_submitted || 0}
+          icon={<Pending className="w-6 h-6" />}
+          gradient="from-yellow-500 to-yellow-600"
         />
         <StatsCard
           title="Winning Bids"
           value={paginationInfo.total_won || 0}
-          icon={<AttachMoney className="w-6 h-6" />}
+          icon={<EmojiEvents className="w-6 h-6" />}
           gradient="from-green-500 to-green-600"
         />
         <StatsCard
           title="Lost Bids"
           value={paginationInfo.total_lost || 0}
-          icon={<AttachMoney className="w-6 h-6" />}
+          icon={<Cancel className="w-6 h-6" />}
           gradient="from-red-500 to-red-600"
-        />
-        <StatsCard
-          title="Submitted Bids"
-          value={paginationInfo.total_submitted || 0}
-          icon={<AttachMoney className="w-6 h-6" />}
-          gradient="from-yellow-500 to-yellow-600"
         />
       </div>
 
@@ -196,6 +246,32 @@ export default function AllBetsPage() {
           >
             Clear Filter
           </button>
+          <Dropdown
+            value={activeFilters.game_id || ''}
+            onChange={(value) => {
+              setActiveFilters((prev) => ({
+                ...prev,
+                game_id: String(value),
+              }));
+              setCurrentPage(1);
+            }}
+            options={gameOptions}
+            placeholder="All Games"
+            className="min-w-48"
+          />
+          <Dropdown
+            value={activeFilters.agent_id || ''}
+            onChange={(value) => {
+              setActiveFilters((prev) => ({
+                ...prev,
+                agent_id: String(value),
+              }));
+              setCurrentPage(1);
+            }}
+            options={agentOptions}
+            placeholder="All Agents"
+            className="min-w-48"
+          />
           <Dropdown
             value={activeFilters.bet_type || ''}
             onChange={(value) => {
@@ -307,6 +383,17 @@ export default function AllBetsPage() {
                 }`}
               >
                 {String(value)}
+              </span>
+            ),
+          },
+          {
+            key: 'winning_amount',
+            label: 'Winning Amount',
+            render: (value, bet) => (
+              <span className={`text-sm font-medium ${
+                bet.status === 'won' ? 'text-green-600' : 'text-gray-400'
+              }`}>
+                {bet.status === 'won' ? `₹${String(value || 0)}` : '-'}
               </span>
             ),
           },
