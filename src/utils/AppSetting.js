@@ -1,5 +1,5 @@
 //This set to use Production Mode or DevelopmentMode
-export const IsProdMode = false;
+export const IsProdMode = true;
 
 export const IsEncryption = false;
 

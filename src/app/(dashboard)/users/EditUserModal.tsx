@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Close, Edit } from '@mui/icons-material';
-import Button from '@/components/ui/button/page';
-import Dropdown from '@/components/ui/dropdown/page';
+import Button from '@/components/ui/button/index';
+import Dropdown from '@/components/ui/dropdown/index';
 
 import { showSuccess, showError } from '../../../utils/notification';
 // API Services
@@ -81,23 +81,24 @@ export default function EditUserModal({
       village: formData.village,
       address: formData.address,
     };
-    authenticationServices.updateUserById(request, user.id).then((response) => {
-      console.log('Update user response:', response);
-      if (
-        response &&
-        response.statusCode === 200 &&
-        response.success === true
-      ) {
-        onUserUpdated();
-        onClose();
-        showSuccess(response.message || 'User updated successfully');
-      } else {
-        showError(response.message || 'Failed to fetch game wise reports');
-      }
-      setLoading(false);
-    });
+    authenticationServices
+      .updateUserById(request, user.id)
+      .then((response: any) => {
+        if (
+          response &&
+          response.statusCode === 200 &&
+          response.success === true
+        ) {
+          onUserUpdated();
+          onClose();
+          showSuccess(response.message || 'User updated successfully');
+        } else {
+          showError(response.message || 'Failed to fetch game wise reports');
+        }
+        setLoading(false);
+      });
   };
-  
+
   if (!isOpen) return null;
 
   return (

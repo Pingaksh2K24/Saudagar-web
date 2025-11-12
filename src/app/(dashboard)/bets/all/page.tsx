@@ -1,10 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { AttachMoney, DateRange } from '@mui/icons-material';
-import DataTable from '@/components/table/page';
-import { ViewButton } from '@/components/action/page';
+import DataTable from '@/components/table/index';
+import { ViewButton } from '@/components/action/index';
 import StatsCard from '../../users/StatsCard';
-import Dropdown from '@/components/ui/dropdown/page';
+import Dropdown from '@/components/ui/dropdown/index';
 import BetDetailsModal from '../BetDetailsModal';
 import React from 'react';
 import moment from 'moment-timezone';

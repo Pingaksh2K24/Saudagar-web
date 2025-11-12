@@ -8,7 +8,7 @@ import {
   EmojiEvents,
 } from '@mui/icons-material';
 import StatsCard from '../../users/StatsCard';
-import DataTable from '@/components/table/page';
+import DataTable from '@/components/table/index';
 import { showError } from '@/utils/notification';
 // API Services
 import DashboardServices from '@/lib/api/axiosServices/apiServices/DashboardServices';
@@ -58,7 +58,7 @@ export default function UserWiseReportsPage() {
       },
     };
     setLoading(true);
-    dashboardServices.getAgentWiseReport(request).then((response) => {
+    dashboardServices.getAgentWiseReport(request).then((response: any) => {
       console.log('Agent wise earning responnse :----', response);
       const apiResponse = response as AgentPerformanceResponse;
       if (
@@ -66,10 +66,11 @@ export default function UserWiseReportsPage() {
         apiResponse.statusCode === 200 &&
         apiResponse.success === true
       ) {
-        const agentList = apiResponse?.data?.agent_list?.map((agent) => ({
-          ...agent,
-          total_bids: agent.total_bids ? agent.total_bids : '-',
-        })) || [];
+        const agentList =
+          apiResponse?.data?.agent_list?.map((agent) => ({
+            ...agent,
+            total_bids: agent.total_bids ? agent.total_bids : '-',
+          })) || [];
         setReports(agentList);
         setSummary(apiResponse?.data?.summary || {});
       } else {

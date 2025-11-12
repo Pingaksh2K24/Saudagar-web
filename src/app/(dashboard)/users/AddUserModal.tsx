@@ -1,8 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { Close, PersonAdd } from '@mui/icons-material';
-import Button from '../../../components/ui/button/page';
-import Dropdown from '../../../components/ui/dropdown/page';
+import Button from '../../../components/ui/button/index';
+import Dropdown from '../../../components/ui/dropdown/index';
 import { getUserSession } from '../../../utils/cookies';
 import { getAuthProps } from '@/utils/AuthenticationLibrary';
 import { showSuccess, showError } from '../../../utils/notification';
@@ -48,7 +48,7 @@ export default function AddUserModal({
       ...submitData,
       created_by: session?.user?.id || 'Admin',
     };
-    authenticationServices.addNewUser(request).then((response) => {
+    authenticationServices.addNewUser(request).then((response: any) => {
       if (
         response &&
         response.statusCode === 201 &&

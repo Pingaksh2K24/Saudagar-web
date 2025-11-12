@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { Rule, Save, SportsEsports } from '@mui/icons-material'
-import Button from '@/components/ui/button/page'
-import Dropdown from '@/components/ui/dropdown/page'
+import Button from '@/components/ui/button/index'
+import Dropdown from '@/components/ui/dropdown/index'
 
 const gameOptions = [
   { value: 'single', label: 'Single' },

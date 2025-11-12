@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SVGIcons } from '../../../utils/svgConstants';
 import { showSuccess, showError } from '../../../utils/notification';
-import Input from '../../ui/input/page';
-import Dropdown from '../../ui/dropdown/page';
-import PasswordInput from '../../passwordinput/page';
+import Input from '../../ui/input/index';
+import Dropdown from '../../ui/dropdown/index';
+import PasswordInput from '../../passwordinput/index';
 import { isValidForm } from '@/utils/validation/CommonValidator';
 import { LoginValidationRules } from '../../../utils/validation/AllValidationRules';
 import AuthenticationServices from '../../../lib/api/axiosServices/apiServices/AuthenticationServices';
@@ -61,7 +61,6 @@ export default function AuthPage({ type }: AuthPageProps) {
       };
 
       const response = await authServices.adminLogin(request);
-      console.log('Login response:', response);
       if (
         response &&
         response.statusCode === 200 &&

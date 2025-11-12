@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, SportsEsports, BarChart } from '@mui/icons-material';
 import StatsCard from '../../users/StatsCard';
-import DataTable from '@/components/table/page';
-import DateInput from '@/components/date-input/page';
+import DataTable from '@/components/table/index';
+import DateInput from '@/components/date-input/index';
 import { showError } from '@/utils/notification';
 // API Services
 import DashboardServices from '@/lib/api/axiosServices/apiServices/DashboardServices';

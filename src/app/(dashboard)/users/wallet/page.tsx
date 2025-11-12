@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { AccountBalanceWallet, Search, TrendingUp, TrendingDown } from '@mui/icons-material'
-import Table from '@/components/table/page'
+import Table from '@/components/table/index'
 
 interface WalletData extends Record<string, unknown> {
   user_id: number

@@ -7,8 +7,7 @@ import {
   AccountBalance,
 } from '@mui/icons-material';
 import StatsCard from '../../users/StatsCard';
-import DataTable from '@/components/table/page';
-import { getUserSession } from '@/utils/cookies';
+import DataTable from '@/components/table/index';
 import moment from 'moment';
 import { showError } from '@/utils/notification';
 // API Services

@@ -7,11 +7,11 @@ import {
   Settings,
 } from '@mui/icons-material';
 import Modal from './Modal';
-import Button from '@/components/ui/button/page';
+import Button from '@/components/ui/button/index';
 import AmountInput from '../ui/amountinput/page';
 import TimeInput from '../time-input/TimeInput';
-import Input from '@/components/ui/input/page';
-import Dropdown from '@/components/ui/dropdown/page';
+import Input from '@/components/ui/input/index';
+import Dropdown from '@/components/ui/dropdown/index';
 import { showSuccess, showError } from '../../utils/notification';
 import DashboardServices from '@/lib/api/axiosServices/apiServices/DashboardServices';
 

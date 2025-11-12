@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { NotificationImportant, Send, Group, Person } from '@mui/icons-material'
-import Button from '@/components/ui/button/page'
-import Dropdown from '@/components/ui/dropdown/page'
+import Button from '@/components/ui/button/index'
+import Dropdown from '@/components/ui/dropdown/index'
 
 const recipientOptions = [
   { value: 'all', label: 'All Users' },

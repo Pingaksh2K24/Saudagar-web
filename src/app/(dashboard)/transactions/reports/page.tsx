@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
 import { Receipt, DateRange, Download, TrendingUp, TrendingDown } from '@mui/icons-material'
-import Button from '@/components/ui/button/page'
-import Dropdown from '@/components/ui/dropdown/page'
+import Button from '@/components/ui/button/index'
+import Dropdown from '@/components/ui/dropdown/index'
 import StatsCard from '../../users/StatsCard'
 
 const reportTypeOptions = [

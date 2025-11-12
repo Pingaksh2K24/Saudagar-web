@@ -8,13 +8,13 @@ import {
   Search,
   DateRange,
 } from '@mui/icons-material';
-import DataTable from '@/components/table/page';
-import { EditButton, DeleteButton } from '@/components/action/page';
+import DataTable from '@/components/table/index';
+import { EditButton, DeleteButton } from '@/components/action/index';
 import StatsCard from '../StatsCard';
-import Dropdown from '@/components/ui/dropdown/page';
+import Dropdown from '@/components/ui/dropdown/index';
 import AddUserModal from '../AddUserModal';
 import EditUserModal from '../EditUserModal';
-import Button from '@/components/ui/button/page';
+import Button from '@/components/ui/button/index';
 import { showSuccess, showError } from '@/utils/notification';
 import ConfirmDialog from '@/components/confirm-dialog/page';
 // API Services
@@ -66,7 +66,7 @@ export default function AllUsersPage() {
   //Fetch all users list
   const getAllUsersList = () => {
     setLoading(true);
-    authenticationServices.getAllUsersList().then((response) => {
+    authenticationServices.getAllUsersList().then((response: any) => {
       if (
         response &&
         response.statusCode === 200 &&
@@ -91,22 +91,24 @@ export default function AllUsersPage() {
   const confirmDeleteUser = () => {
     if (userToDelete) {
       setLoading(true);
-      authenticationServices.deleteUserById(userToDelete).then((response) => {
-        console.log('Delete game response:', response);
-        if (
-          response &&
-          response.statusCode === 200 &&
-          response.success === true
-        ) {
-          showSuccess(response.message || 'Usser deleted successfully');
-          getAllUsersList();
-        } else {
-          showError(response.message || 'Failed to delete user');
-        }
-        setLoading(false);
-        setShowDeleteConfirm(false);
-        setUserToDelete(null);
-      });
+      authenticationServices
+        .deleteUserById(userToDelete)
+        .then((response: any) => {
+          console.log('Delete game response:', response);
+          if (
+            response &&
+            response.statusCode === 200 &&
+            response.success === true
+          ) {
+            showSuccess(response.message || 'Usser deleted successfully');
+            getAllUsersList();
+          } else {
+            showError(response.message || 'Failed to delete user');
+          }
+          setLoading(false);
+          setShowDeleteConfirm(false);
+          setUserToDelete(null);
+        });
     }
   };
 

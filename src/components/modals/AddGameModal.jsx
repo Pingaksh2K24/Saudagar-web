@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
 import Modal from './Modal';
-import Button from '../ui/button/page';
+import Button from '../ui/button/index';
 import AmountInput from '../ui/amountinput/page';
 import TimeInput from '../time-input/TimeInput';
-import Input from '../ui/input/page';
-import Dropdown from '../ui/dropdown/page';
+import Input from '../ui/input/index';
+import Dropdown from '../ui/dropdown/index';
 import { showSuccess, showError } from '../../utils/notification';
 import { Add, SportsEsports, Description, Settings } from '@mui/icons-material';
 // Import API service

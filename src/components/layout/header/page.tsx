@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { SVGIcons } from '@/utils/svgConstants'
-import Button from '@/components/ui/button/page'
+import Button from '@/components/ui/button/index'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { getUserSession, clearUserSession } from '../../../utils/cookies'
 import ConfirmDialog from '@/components/confirm-dialog/page'

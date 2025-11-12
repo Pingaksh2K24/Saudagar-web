@@ -10,11 +10,11 @@ import {
   ViewList,
   DateRange,
 } from '@mui/icons-material';
-import DataTable from '../../../../components/table/page';
-import { EditButton, DeleteButton } from '@/components/action/page';
+import DataTable from '../../../../components/table/index';
+import { EditButton, DeleteButton } from '@/components/action/index';
 import StatsCard from '@/app/(dashboard)/users/StatsCard';
-import Dropdown from '@/components/ui/dropdown/page';
-import Button from '@/components/ui/button/page';
+import Dropdown from '@/components/ui/dropdown/index';
+import Button from '@/components/ui/button/index';
 import AddGameModal from '@/components/modals/AddGameModal';
 import EditGameModal from '@/components/modals/EditGameModal';
 import ConfirmDialog from '@/components/confirm-dialog/page';

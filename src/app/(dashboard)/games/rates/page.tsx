@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { SportsEsports } from '@mui/icons-material';
-import DataTable, { Column } from '@/components/table/page';
+import DataTable, { Column } from '@/components/table/index';
 import UpdateRatesModal from './UpdateRatesModal';
 import { showError } from '@/utils/notification';
 import { getAuthProps } from '@/utils/AuthenticationLibrary';
@@ -33,7 +33,7 @@ export default function GameRatesPage() {
   //Get game list
   const fetchGameList = () => {
     setLoading(true);
-    dashboardServices.fetchGameList().then((response) => {
+    dashboardServices.fetchGameList().then((response: any) => {
       if (
         response &&
         response.statusCode === 200 &&
@@ -57,7 +57,7 @@ export default function GameRatesPage() {
     setSelectedGameId(game_id);
     setSelectedGameName(game_name);
     setLoading(true);
-    dashboardServices.getGameRates(game_id).then((response) => {
+    dashboardServices.getGameRates(game_id).then((response: any) => {
       console.log('Fetched game rates response:', response);
       if (
         response &&

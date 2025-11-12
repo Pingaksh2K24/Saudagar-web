@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { DateRange, Save, SportsEsports } from '@mui/icons-material';
-import Button from '@/components/ui/button/page';
-import Dropdown from '@/components/ui/dropdown/page';
-import DateInput from '@/components/date-input/page';
+import Button from '@/components/ui/button/index';
+import Dropdown from '@/components/ui/dropdown/index';
+import DateInput from '@/components/date-input/index';
 import { formatDateForInput } from '../../../../utils/helper';
 import { showSuccess, showError } from '@/utils/notification';
 // API Services

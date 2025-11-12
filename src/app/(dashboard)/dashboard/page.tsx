@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import DashboardHeader from '../../../components/dashboard/DashboardHeader';
 import AddUserModal from '../users/AddUserModal';
-import Dropdown from '@/components/ui/dropdown/page';
+import Dropdown from '@/components/ui/dropdown/index';
 import FilteredBidsTable from '../../../components/dashboard/FilteredBidsTable';
 import AtRiskTable from '../../../components/dashboard/AtRiskTable';
 import { showError } from '@/utils/notification';
@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const dashboardServices = new DashboardServices();
 
   useEffect(() => {
-    getTodaysResults();    
+    getTodaysResults();
   }, []);
 
   //Get today's results
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   };
   //Get villege list
   const getVillegeList = () => {
-    dashboardServices.getViilegeList().then((response) => {
+    dashboardServices.getViilegeList().then((response: any) => {
       if (
         response &&
         response.statusCode === 200 &&
@@ -136,7 +136,7 @@ export default function DashboardPage() {
         setRiskBidsLoading(false);
       });
   };
-// Filter admin bids by village and game
+  // Filter admin bids by village and game
   const getBidsByVillage = async (
     villageName: string,
     gameId?: string,

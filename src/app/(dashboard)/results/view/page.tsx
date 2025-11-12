@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { List, SportsEsports } from '@mui/icons-material'
-import DataTable from '@/components/table/page'
+import DataTable from '@/components/table/index'
 import { showError } from '@/utils/notification'
 import moment from 'moment'
 // API Services

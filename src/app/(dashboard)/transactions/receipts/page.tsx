@@ -6,8 +6,8 @@ import {
   AttachMoney,
   DateRange,
 } from '@mui/icons-material';
-import DataTable from '@/components/table/page';
-import { ViewButton } from '@/components/action/page';
+import DataTable from '@/components/table/index';
+import { ViewButton } from '@/components/action/index';
 import StatsCard from '../../users/StatsCard';
 import moment from 'moment';
 import ViewReceiptModal from './ViewReceiptModal';

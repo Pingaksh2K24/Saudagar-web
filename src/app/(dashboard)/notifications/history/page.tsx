@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { History, Search } from '@mui/icons-material'
-import DataTable from '@/components/table/page'
-import { ViewButton } from '@/components/action/page'
-import Dropdown from '@/components/ui/dropdown/page'
+import DataTable from '@/components/table/index'
+import { ViewButton } from '@/components/action/index'
+import Dropdown from '@/components/ui/dropdown/index'
 import StatsCard from '../../users/StatsCard'
 
 interface MessageHistory extends Record<string, unknown> {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Dropdown from '../ui/dropdown/page';
+import Dropdown from '../ui/dropdown/index';
 interface GameOption {
   value: number | string;
   label: string;

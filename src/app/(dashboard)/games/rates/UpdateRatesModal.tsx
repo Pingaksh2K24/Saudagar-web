@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Close, Save } from '@mui/icons-material';
 import { getUserSession } from '@/utils/cookies';
-import Input from '@/components/ui/input/page';
+import Input from '@/components/ui/input/index';
 import { showSuccess, showError } from '@/utils/notification';
 
 // API Services
@@ -67,7 +67,7 @@ export default function UpdateRatesModal({
         is_active: rate.is_active,
       })),
     };
-    dashboardServices.updateGameRates(request, gameId).then((response) => {
+    dashboardServices.updateGameRates(request, gameId).then((response: any) => {
       console.log('Update Game Response:', response);
       if (
         response &&
@@ -83,7 +83,6 @@ export default function UpdateRatesModal({
       setLoading(false);
     });
   };
-
 
   if (!isOpen) return null;
 
