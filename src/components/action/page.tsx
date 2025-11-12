@@ -23,7 +23,7 @@ export function ViewButton({ onClick, size = 'medium', disabled = false }: Actio
       }`}
       title="View Details"
     >
-      <Visibility className="w-3 h-3" />
+      <Visibility style={{fontSize: '16px'}} />
     </button>
   )
 }
@@ -44,7 +44,7 @@ export function EditButton({ onClick, size = 'medium', disabled = false }: Actio
       }`}
       title="Edit Record"
     >
-      <Edit className="w-3 h-3" />
+      <Edit style={{fontSize: '16px'}} />
     </button>
   )
 }
@@ -65,7 +65,7 @@ export function DeleteButton({ onClick, size = 'medium', disabled = false }: Act
       }`}
       title="Delete Record"
     >
-      <Delete className="w-3 h-3" />
+      <Delete style={{fontSize: '16px'}} />
     </button>
   )
 }

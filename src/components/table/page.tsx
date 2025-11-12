@@ -39,6 +39,7 @@ export default function DataTable<T extends Record<string, unknown>>({
 }: DataTableProps<T>) {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [pageInput, setPageInput] = useState('')
   const recordsPerPage = 10
 
   const handleSort = (key: string) => {
@@ -96,6 +97,71 @@ export default function DataTable<T extends Record<string, unknown>>({
     } else {
       setCurrentPage(prev => Math.min(prev + 1, totalPages))
     }
+  }
+
+  const handlePageInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const page = parseInt(pageInput)
+      if (page >= 1 && page <= totalPages) {
+        goToPage(page)
+        setPageInput('')
+      }
+    }
+  }
+
+  const renderPaginationButtons = () => {
+    if (totalPages <= 10) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button
+          key={page}
+          onClick={() => goToPage(page)}
+          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+            page === currentPageNum
+              ? 'z-10 bg-red-50 border-red-500 text-red-600'
+              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+          }`}
+        >
+          {page}
+        </button>
+      ))
+    }
+
+    return (
+      <>
+        <button
+          onClick={() => goToPage(1)}
+          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+            1 === currentPageNum
+              ? 'z-10 bg-red-50 border-red-500 text-red-600'
+              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+          }`}
+        >
+          1
+        </button>
+        
+        <input
+          type="number"
+          value={pageInput}
+          onChange={(e) => setPageInput(e.target.value)}
+          onKeyPress={handlePageInput}
+          placeholder={`${currentPageNum}`}
+          className="relative inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium text-center w-16 focus:outline-none focus:ring-1 focus:ring-red-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          min="1"
+          max={totalPages}
+        />
+        
+        <button
+          onClick={() => goToPage(totalPages)}
+          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+            totalPages === currentPageNum
+              ? 'z-10 bg-red-50 border-red-500 text-red-600'
+              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+          }`}
+        >
+          {totalPages}
+        </button>
+      </>
+    )
   }
 
   if (loading) {
@@ -196,19 +262,7 @@ export default function DataTable<T extends Record<string, unknown>>({
                 >
                   ←
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => goToPage(page)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                      page === currentPageNum
-                        ? 'z-10 bg-red-50 border-red-500 text-red-600'
-                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {renderPaginationButtons()}
                 <button
                   onClick={goToNext}
                   disabled={isPaginationObject ? !paginationData?.has_next : currentPageNum === totalPages}

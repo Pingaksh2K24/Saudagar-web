@@ -61,7 +61,7 @@ export default function AllGamesPage() {
   //Get Game list
   const fetchGameList = () => {
     setLoading(true);
-    dashboardServices.fetchGameList().then((response) => {
+    dashboardServices.fetchGameList().then((response: any) => {
       if (
         response &&
         response.statusCode === 200 &&
@@ -85,7 +85,7 @@ export default function AllGamesPage() {
   const confirmDeleteGame = () => {
     if (gameToDelete) {
       setLoading(true);
-      dashboardServices.deleteGameById(gameToDelete).then((response) => {
+      dashboardServices.deleteGameById(gameToDelete).then((response: any) => {
         console.log('Delete game response:', response);
         if (
           response &&
@@ -106,7 +106,7 @@ export default function AllGamesPage() {
   //Get game details by id
   const getGameDetailsById = (gameId: number) => {
     setLoading(true);
-    dashboardServices.getGameDetailsById(gameId).then((response) => {
+    dashboardServices.getGameDetailsById(gameId).then((response: any) => {
       console.log('Game details By Id response:', response);
       if (
         response &&
@@ -208,10 +208,10 @@ export default function AllGamesPage() {
       </div>
       {viewMode === 'table' ? (
         <DataTable<Game>
-          data={games.filter((game) => {
+          data={games.filter((game: any) => {
             const matchesSearch =
               searchTerm === '' ||
-              game.game_name?.toLowerCase().includes(searchTerm.toLowerCase());
+              game?.game_name?.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesType =
               !activeFilters.type || game.game_type === activeFilters.type;
             const matchesStatus =
@@ -288,7 +288,7 @@ export default function AllGamesPage() {
               label: 'Created',
               render: (value) => (
                 <span className="text-sm text-gray-500">
-                  <DateRange className="w-4 h-4 mr-2" />p
+                  <DateRange className="w-4 h-4 mr-2" />
                   {new Date(String(value)).toLocaleDateString()}
                 </span>
               ),
@@ -312,7 +312,7 @@ export default function AllGamesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {games
-            .filter((game) => {
+            .filter((game: any) => {
               const matchesSearch =
                 searchTerm === '' ||
                 game.game_name
