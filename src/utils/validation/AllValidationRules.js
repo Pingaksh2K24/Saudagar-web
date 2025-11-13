@@ -18,41 +18,141 @@ export const LoginValidationRules = {
   password: [
     {
       type: 'require',
-      message: CommonValidationMessages.FieldRequired.replace('{0}', 'Password'),
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'password'
+      ),
+    },
+  ],
+};
+// Add user validation rules
+export const AddUserValidationRules = {
+  full_name: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'full name'
+      ),
+    },
+  ],
+  email: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'email'),
+    },
+    {
+      type: 'email',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'valid email address'
+      ),
+    },
+  ],
+  mobile_number: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'mobile number'
+      ),
+    },
+  ],
+  password: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'password'
+      ),
+    },
+  ],
+  confirmPassword: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'confirm password'
+      ),
+    },
+    {
+      type: 'compare',
+      compareEle: 'password',
+      message: CommonValidationMessages.ComparePassword,
+    },
+  ],
+  // role: [
+  //     {
+  //         type: "require",
+  //         message: CommonValidationMessages.SelectRequired.replace("{0}", "role"),
+  //     }
+  // ],
+  village: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'village'),
+    },
+  ],
+  address: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'address'),
+    },
+  ],
+};
+// Edit user validation rules
+export const EditUserValidationRules = {
+  full_name: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'full name'
+      ),
+    },
+  ],
+  email: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'email'),
+    },
+    {
+      type: 'email',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'valid email address'
+      ),
+    },
+  ],
+  mobile_number: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace(
+        '{0}',
+        'mobile number'
+      ),
+    },
+  ],
+  // role: [
+  //     {
+  //         type: "require",
+  //         message: CommonValidationMessages.SelectRequired.replace("{0}", "role"),
+  //     }
+  // ],
+  village: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'village'),
+    },
+  ],
+  address: [
+    {
+      type: 'require',
+      message: CommonValidationMessages.FieldRequired.replace('{0}', 'address'),
     },
   ],
 };
 
-// Edit game validation rules
-export const EngagementTrackingValidationRules = {
-  // corporateEngagementTypeId: [
-  //     {
-  //         type: "require",
-  //         message: CommonValidationMessages.SelectRequired.replace("{0}", "engagement type"),
-  //     }
-  // ],
-  // engagementDescription: [
-  //     {
-  //         type: "require",
-  //         message: CommonValidationMessages.FieldRequired.replace("{0}", "description"),
-  //     },
-  // ],
-  corporateEngagementRecordedById: [
-    {
-      type: 'require',
-      message: CommonValidationMessages.SelectRequired.replace(
-        '{0}',
-        'recorded by'
-      ),
-    },
-  ],
-  // corporateEngagementFollowUpById: [
-  //     {
-  //         type: "require",
-  //         message: CommonValidationMessages.SelectRequired.replace("{0}", "follow up by"),
-  //     }
-  // ],
-};
 // Company Profile Validation Rule
 export const CompanyProfileValidationRules = {
   companyName: [

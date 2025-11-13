@@ -194,7 +194,7 @@ export default function DashboardPage() {
           <Dropdown
             options={villageList}
             value={
-              villageList.find((v) => v.label === selectedVillage)?.value || ''
+              villageList?.find((v) => v.label === selectedVillage)?.value || ''
             }
             onChange={(value) => {
               const selectedVillageObj = villageList.find(

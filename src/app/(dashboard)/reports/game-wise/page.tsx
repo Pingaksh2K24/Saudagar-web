@@ -102,13 +102,13 @@ export default function GameWiseReportsPage() {
         />
         <StatsCard
           title="Total Amount"
-          value={`₹${summary?.total_amount}`}
+          value={`₹${Number(summary?.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingUp className="w-6 h-6" />}
           gradient="from-purple-500 to-purple-600"
         />
         <StatsCard
           title="Net Profit"
-          value={`₹${summary?.net_profit}`}
+          value={`₹${Number(summary?.net_profit || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingUp className="w-6 h-6" />}
           gradient={
             summary?.net_profit >= 0

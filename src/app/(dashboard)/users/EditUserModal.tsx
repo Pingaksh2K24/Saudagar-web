@@ -1,9 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Close, Edit } from '@mui/icons-material';
+import Input from '@/components/ui/input';
 import Button from '@/components/ui/button/index';
 import Dropdown from '@/components/ui/dropdown/index';
-
+import { EditUserValidationRules } from '@/utils/validation/AllValidationRules';
+import { isValidForm } from '@/utils/validation/CommonValidator';
 import { showSuccess, showError } from '../../../utils/notification';
 // API Services
 import AuthenticationServices from '@/lib/api/axiosServices/apiServices/AuthenticationServices';
@@ -34,17 +36,20 @@ export default function EditUserModal({
     full_name: '',
     email: '',
     mobile_number: '',
-    role: 'user',
+    role: 'agent',
     status: 'active',
     village: '',
     address: '',
   });
   const [loading, setLoading] = useState(false);
+  const [validState, isValidState] = useState({
+    isValid: true,
+    error: {},
+  });
   const authenticationServices = new AuthenticationServices();
 
   const roleOptions = [
     { value: 'agent', label: 'Agent' },
-    { value: 'user', label: 'User' },
     { value: 'admin', label: 'Admin' },
     { value: 'moderator', label: 'Moderator' },
   ];
@@ -68,35 +73,46 @@ export default function EditUserModal({
     }
   }, [user]);
 
-  //Add user method
-  const updateUserById = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const request = {
-      full_name: formData.full_name,
-      mobile_number: formData.mobile_number,
-      role: formData.role,
-      email: formData.email,
-      status: formData.status,
-      village: formData.village,
-      address: formData.address,
-    };
-    authenticationServices
-      .updateUserById(request, user.id)
-      .then((response: any) => {
-        if (
-          response &&
-          response.statusCode === 200 &&
-          response.success === true
-        ) {
-          onUserUpdated();
-          onClose();
-          showSuccess(response.message || 'User updated successfully');
-        } else {
-          showError(response.message || 'Failed to fetch game wise reports');
-        }
-        setLoading(false);
-      });
+  const isValidateAllFields = () => {
+    const newValidState = isValidForm(
+      formData,
+      EditUserValidationRules,
+      validState
+    );
+    isValidState(newValidState);
+    return newValidState.isValid;
+  };
+
+  //Update user method
+  const updateUserById = () => {
+    if (isValidateAllFields()) {
+      setLoading(true);
+      const request = {
+        full_name: formData.full_name,
+        mobile_number: formData.mobile_number,
+        role: formData.role,
+        email: formData.email,
+        status: formData.status,
+        village: formData.village,
+        address: formData.address,
+      };
+      authenticationServices
+        .updateUserById(request, user.id)
+        .then((response: any) => {
+          if (
+            response &&
+            response.statusCode === 200 &&
+            response.success === true
+          ) {
+            onUserUpdated();
+            onClose();
+            showSuccess(response.message || 'User updated successfully');
+          } else {
+            showError(response.message || 'Failed to update user');
+          }
+          setLoading(false);
+        });
+    }
   };
 
   if (!isOpen) return null;
@@ -110,50 +126,51 @@ export default function EditUserModal({
             Edit User
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              isValidState({ isValid: true, error: {} });
+            }}
             className="text-gray-400 hover:text-gray-600"
           >
             <Close className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={updateUserById} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); updateUserById(); }} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <input
+            <Input
               type="text"
               placeholder="Full Name"
               value={formData.full_name}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, full_name: e.target.value }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, full_name: value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
               required
+              error={validState?.error?.full_name}
             />
-            <input
+            <Input
               type="email"
               placeholder="Email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, email: value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              required
+              error={validState?.error?.email}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <input
+            <Input
               type="tel"
               placeholder="Mobile Number"
               value={formData.mobile_number}
-              onChange={(e) =>
+              onChange={(value) =>
                 setFormData((prev) => ({
                   ...prev,
-                  mobile_number: e.target.value,
+                  mobile_number: value,
                 }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              required
+              error={validState?.error?.mobile_number}
             />
             <Dropdown
               options={roleOptions}
@@ -162,7 +179,6 @@ export default function EditUserModal({
                 setFormData((prev) => ({ ...prev, role: String(value) }))
               }
               placeholder="Select Role"
-              required
             />
           </div>
 
@@ -174,29 +190,26 @@ export default function EditUserModal({
                 setFormData((prev) => ({ ...prev, status: String(value) }))
               }
               placeholder="Select Status"
-              required
             />
-            <input
+            <Input
               type="text"
               placeholder="Village"
               value={formData.village}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, village: e.target.value }))
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, village: value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              required
+              error={validState?.error?.village}
             />
           </div>
 
-          <input
+          <Input
             type="text"
             placeholder="Address"
             value={formData.address}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, address: e.target.value }))
+            onChange={(value) =>
+              setFormData((prev) => ({ ...prev, address: value }))
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-            required
+            error={validState?.error?.address}
           />
 
           <div className="flex space-x-3 pt-4">
@@ -204,14 +217,18 @@ export default function EditUserModal({
               type="button"
               caption="Cancel"
               variant="outline"
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                isValidState({ isValid: true, error: {} });
+              }}
               className="flex-1"
             />
             <Button
-              type="submit"
+              type="button"
               caption="Update User"
               variant="primary"
               loading={loading}
+              onClick={updateUserById}
               className="flex-1"
             />
           </div>

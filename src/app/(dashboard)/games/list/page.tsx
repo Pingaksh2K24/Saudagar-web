@@ -153,10 +153,10 @@ export default function AllGamesPage() {
           gradient="from-green-500 to-green-600"
         />
         <StatsCard
-          title="Single Games"
-          value={games.filter((g) => g.type === 'single').length}
+          title="Inactive Games"
+          value={games.filter((g) => g.status === 'inactive').length}
           icon={<SportsEsports className="w-6 h-6" />}
-          gradient="from-purple-500 to-purple-600"
+          gradient="from-red-500 to-red-600"
         />
         <StatsCard
           title="Jodi Games"
@@ -289,7 +289,7 @@ export default function AllGamesPage() {
               render: (value) => (
                 <span className="text-sm text-gray-500">
                   <DateRange className="w-4 h-4 mr-2" />
-                  {new Date(String(value)).toLocaleDateString()}
+                  {new Date(String(value)).toLocaleDateString('en-GB')}
                 </span>
               ),
             },
@@ -385,7 +385,7 @@ export default function AllGamesPage() {
                     <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                       <span className="text-xs text-gray-500">Created</span>
                       <span className="text-xs font-medium text-gray-700">
-                        {new Date(game.created_at).toLocaleDateString()}
+                        {new Date(game.created_at).toLocaleDateString('en-GB')}
                       </span>
                     </div>
                   </div>

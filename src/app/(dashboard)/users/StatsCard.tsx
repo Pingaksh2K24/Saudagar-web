@@ -10,7 +10,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, icon, gradient }: StatsCardProps) {
   return (
-    <div className={`bg-gradient-to-r ${gradient} rounded-lg p-6 text-white`}>
+    <div className={`bg-gradient-to-r ${gradient} rounded-lg p-4 text-white`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-white/80 text-sm font-medium">{title}</p>

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import moment from "moment"
 
 export default function BidDetailsModal({ isOpen, onClose, bidData }) {
   if (!isOpen || !bidData) return null
@@ -69,7 +69,7 @@ export default function BidDetailsModal({ isOpen, onClose, bidData }) {
             </div>
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200">
               <p className="text-xs text-gray-600 font-semibold mb-1">Agent</p>
-              <p className="text-sm font-bold text-gray-800">{bidData.agent}</p>
+              <p className="text-sm font-bold text-gray-800">{bidData.full_name}</p>
             </div>
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-purple-200">
               <p className="text-xs text-purple-600 font-semibold mb-1">Village</p>
@@ -80,47 +80,44 @@ export default function BidDetailsModal({ isOpen, onClose, bidData }) {
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-green-200">
               <p className="text-xs text-green-600 font-semibold mb-1">Game</p>
-              <p className="text-sm font-bold text-green-800">{getGameName(bidData.game)}</p>
+              <p className="text-sm font-bold text-green-800">{getGameName(bidData.game_name)}</p>
             </div>
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-orange-200">
               <p className="text-xs text-orange-600 font-semibold mb-1">Session</p>
-              <p className="text-sm font-bold text-orange-800">{bidData.session}</p>
+              <p className="text-sm font-bold text-orange-800">{bidData.session_type}</p>
             </div>
             <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-indigo-200">
               <p className="text-xs text-indigo-600 font-semibold mb-1">Bid Type</p>
-              <p className="text-sm font-bold text-indigo-800">{bidData.bidType}</p>
+              <p className="text-sm font-bold text-indigo-800">{bidData.bid_type_name}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-cyan-200">
               <p className="text-xs text-cyan-600 font-semibold mb-1">Number</p>
-              <p className="text-lg font-mono font-bold text-cyan-800">{bidData.number}</p>
+              <p className="text-lg font-mono font-bold text-cyan-800">{bidData.bid_number}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-emerald-200">
               <p className="text-xs text-emerald-600 font-semibold mb-1">Bet Amount</p>
-              <p className="text-lg font-bold text-emerald-800">₹{bidData.amount.toLocaleString()}</p>
+              <p className="text-lg font-bold text-emerald-800">₹{Number(bidData.amount).toLocaleString()}</p>
             </div>
             <div className="bg-gradient-to-br from-rose-50 to-rose-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-rose-200">
               <p className="text-xs text-rose-600 font-semibold mb-1">Date</p>
-              <p className="text-sm font-bold text-rose-800">{bidData.date}</p>
+              <p className="text-sm font-bold text-rose-800">{moment(bidData.bid_date).format('DD MMM YYYY') || '-  '}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-yellow-200">
               <p className="text-xs text-yellow-600 font-semibold mb-1">Status</p>
-              <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm ${getStatusColor(bidData.status)}`}>
-                {bidData.status.toUpperCase()}
+              <span className={`inline-block px-3 py-1 capitalize rounded-full text-xs font-bold shadow-sm ${getStatusColor(bidData.status)}`}>
+                {bidData.status}
               </span>
             </div>
-            <div className="bg-gradient-to-br from-teal-50 to-teal-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-teal-200">
-              <p className="text-xs text-teal-600 font-semibold mb-1">Commission</p>
-              <p className="text-sm font-bold text-teal-800">₹{Math.round(bidData.amount * 0.05)}</p>
-            </div>
+            
             <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-pink-200">
-              <p className="text-xs text-pink-600 font-semibold mb-1">Potential Win</p>
-              <p className="text-sm font-bold text-pink-800">₹{(bidData.amount * 9).toLocaleString()}</p>
+              <p className="text-xs text-pink-600 font-semibold mb-1">Winning Amount</p>
+              <p className="text-sm font-bold text-pink-800">{bidData.winning_amount? `₹${bidData.winning_amount}` : '-'}</p>
             </div>
           </div>
           
@@ -129,11 +126,11 @@ export default function BidDetailsModal({ isOpen, onClose, bidData }) {
               <div className="grid grid-cols-3 gap-3">
                 <div className="text-center bg-white p-2 rounded-lg shadow-sm">
                   <p className="text-xs text-green-600 font-bold mb-1">Won Amount</p>
-                  <p className="text-lg font-bold text-green-800">₹{(bidData.amount * 9).toLocaleString()}</p>
+                  <p className="text-lg font-bold text-green-800">₹{bidData.winning_amount ? Number(bidData.winning_amount).toLocaleString() : (Number(bidData.amount) * 9).toLocaleString()}</p>
                 </div>
                 <div className="text-center bg-white p-2 rounded-lg shadow-sm">
                   <p className="text-xs text-green-600 font-bold mb-1">Profit</p>
-                  <p className="text-lg font-bold text-green-800">₹{(bidData.amount * 8).toLocaleString()}</p>
+                  <p className="text-lg font-bold text-green-800">₹{bidData.winning_amount ? (Number(bidData.winning_amount) - Number(bidData.amount)).toLocaleString() : (Number(bidData.amount) * 8).toLocaleString()}</p>
                 </div>
                 <div className="text-center bg-white p-2 rounded-lg shadow-sm">
                   <p className="text-xs text-green-600 font-bold mb-1">Result</p>
@@ -149,15 +146,16 @@ export default function BidDetailsModal({ isOpen, onClose, bidData }) {
           )}
         </div>
         
-        <div className="flex space-x-2 mt-3 pt-3 border-t border-gray-200">
+        <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-gray-200">
+         
+          <button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 px-8 rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-lg">
+            Print
+          </button>
           <button 
             onClick={onClose}
-            className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+            className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white py-2 px-8 rounded-lg text-xs font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
           >
             Close
-          </button>
-          <button className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
-            Print
           </button>
         </div>
       </div>

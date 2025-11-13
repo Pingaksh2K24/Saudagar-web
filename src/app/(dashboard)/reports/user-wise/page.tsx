@@ -86,7 +86,7 @@ export default function UserWiseReportsPage() {
       <div className="flex items-center mb-6">
         <Group className="w-8 h-8 text-red-500 mr-3" />
         <h1 className="text-3xl font-bold text-gray-900">
-          User-wise Performance
+          Agent-wise Performance
         </h1>
       </div>
 

@@ -50,22 +50,20 @@ export default function DailyReportsPage() {
   //Fetch game wise earning
   const fetchWeeklyProfitLoss = () => {
     setLoading(true);
-    dashboardServices.getWeeklyReport().then((response: unknown) => {
-      console.log('Weekly report response:', response);
-      const apiResponse = response as WeeklyApiResponse;
+    dashboardServices.getWeeklyReport().then((response: any) => {
       if (
-        apiResponse &&
-        apiResponse.statusCode === 200 &&
-        apiResponse.success === true
+        response &&
+        response.statusCode === 200 &&
+        response.success === true
       ) {
-        console.log('Daily profit loss data:', apiResponse);
+        console.log('Daily profit loss data:', response);
         setReports(
-          Array.isArray(apiResponse?.data?.daily_data) ? apiResponse?.data?.daily_data : []
+          Array.isArray(response?.data?.daily_data) ? response?.data?.daily_data : []
         );
-        setSummary(apiResponse?.data?.summary || null);
+        setSummary(response?.data?.summary || null);
         console.log('Summary Details:', summary);
       } else {
-        showError(apiResponse?.message || 'Failed to fetch weekly reports');
+        showError(response?.message || 'Failed to fetch weekly reports');
         setReports([]);
       }
       setLoading(false);
@@ -99,19 +97,19 @@ export default function DailyReportsPage() {
         />
         <StatsCard
           title="Total Amount"
-          value={`₹${summary?.total_amount?.toLocaleString() || '0'}`}
+          value={`₹${Number(summary?.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingUp className="w-6 h-6" />}
-          gradient="from-green-500 to-green-600"
+          gradient="from-amber-400 to-amber-500"
         />
         <StatsCard
           title="Total Wins"
-          value={`₹${summary?.total_winning_amount}`}
+          value={`₹${Number(summary?.total_winning_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingDown className="w-6 h-6" />}
           gradient="from-red-500 to-red-600"
         />
         <StatsCard
           title="Profit/Loss"
-          value={`₹${summary?.profit_loss}`}
+          value={`₹${Number(summary?.profit_loss || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<AccountBalance className="w-6 h-6" />}
           gradient={
             todayData.profit_loss >= 0

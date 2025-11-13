@@ -128,7 +128,7 @@ export default function AllUsersPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <StatsCard
           title="Total Users"
           value={users.length}
@@ -137,7 +137,7 @@ export default function AllUsersPage() {
         />
         <StatsCard
           title="Active Users"
-          value={users.filter((u) => u.status === 'Active').length}
+          value={users.filter((u) => u.status === 'active').length}
           icon={<PersonAdd className="w-6 h-6" />}
           gradient="from-green-500 to-green-600"
         />
@@ -152,6 +152,12 @@ export default function AllUsersPage() {
           value={users.filter((u) => u.role === 'moderator').length}
           icon={<Group className="w-6 h-6" />}
           gradient="from-indigo-500 to-indigo-600"
+        />
+        <StatsCard
+          title="Agents"
+          value={users.filter((u) => u.role === 'agent').length}
+          icon={<PersonAdd className="w-6 h-6" />}
+          gradient="from-orange-500 to-orange-600"
         />
       </div>
 

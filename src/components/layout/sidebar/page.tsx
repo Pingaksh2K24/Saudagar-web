@@ -266,7 +266,7 @@ export default function Sidebar() {
                   <TrendingUp className="w-3 h-3 mr-2 inline" /> Game-wise Earnings
                 </Link>
                 <Link href="/reports/user-wise" className={`block px-3 py-1 rounded-lg text-xs ${isActive('/reports/user-wise') ? 'bg-gray-600' : 'text-gray-400 hover:bg-gray-800'}`}>
-                  <Group className="w-3 h-3 mr-2 inline" /> User-wise Performance
+                  <Group className="w-3 h-3 mr-2 inline" /> Agent-wise Performance
                 </Link>
               </div>
             )}
